@@ -30,7 +30,7 @@ export default async function handler(request, response) {
 
         const details = productDetails[lang];
         const currency = lang === 'pt' ? 'brl' : (lang === 'fr' || lang === 'de' || lang === 'it' ? 'eur' : 'usd');
-        const unitAmount = lang === 'pt' ? 1490 : (currency === 'eur' ? 299 : 299); // R$14,90, €2,99, or $2.99
+        const unitAmount = lang === 'pt' ? 100 : (currency === 'eur' ? 299 : 299); // R$1,0, €2,99, or $2.99
 
         const successUrl = `https://${request.headers.host}?session_id={CHECKOUT_SESSION_ID}`;
         const cancelUrl = `https://${request.headers.host}`;

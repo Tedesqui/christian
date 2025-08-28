@@ -1,16 +1,16 @@
-import mercadopago from 'mercadopago';
+import { MercadoPagoConfig, Preference } from 'mercadopago';
 
-// Este endpoint lida exclusivamente com a criação de pagamentos PIX via Mercado Pago.
+// Este endpoint lida com a criação de pagamentos PIX usando a sintaxe do Mercado Pago SDK v2.
 
 export default async function handler(request, response) {
     if (request.method !== 'POST') {
         return response.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    // Configura o SDK do Mercado Pago com sua chave de acesso.
-    // Lembre-se de adicionar MERCADOPAGO_ACCESS_TOKEN às suas variáveis de ambiente.
-    mercadopago.configure({
-        access_token: process.env.MERCADOPAGO_ACCESS_TOKEN,
+    // 1. Inicializa o cliente do Mercado Pago com a sua chave de acesso.
+    // Lembre-se de que a variável MERCADOPAGO_ACCESS_TOKEN deve estar configurada na Vercel.
+    const client = new MercadoPagoConfig({ 
+        accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN 
     });
 
     try {
@@ -20,9 +20,11 @@ export default async function handler(request, response) {
         const successUrl = `https://${request.headers.host}?session_id=${pseudoSessionId}`;
         const cancelUrl = `https://${request.headers.host}`;
 
-        const preference = {
+        // 2. Cria o corpo da preferência de pagamento.
+        const preferenceBody = {
             items: [
                 {
+                    id: 'ia-crista-semanal',
                     title: 'Acesso Semanal - IA Cristã',
                     description: '7 dias de acesso para conversar com seu assistente de fé.',
                     quantity: 1,
@@ -30,7 +32,6 @@ export default async function handler(request, response) {
                     unit_price: 1.00,
                 },
             ],
-            // Especificamos que queremos apenas PIX, excluindo outros métodos.
             payment_methods: {
                 default_payment_method_id: 'pix',
                 excluded_payment_types: [
@@ -39,20 +40,21 @@ export default async function handler(request, response) {
                     { id: "ticket" },
                     { id: "atm" }
                 ],
-                installments: 1,
             },
             back_urls: {
                 success: successUrl,
                 failure: cancelUrl,
                 pending: cancelUrl,
             },
-            auto_return: 'approved', // Redireciona automaticamente após o pagamento.
+            auto_return: 'approved',
         };
-
-        const result = await mercadopago.preferences.create(preference);
         
-        // Retorna a URL de checkout do Mercado Pago para o frontend.
-        return response.status(200).json({ checkoutUrl: result.body.init_point });
+        // 3. Cria a preferência usando o cliente.
+        const preference = new Preference(client);
+        const result = await preference.create({ body: preferenceBody });
+        
+        // Retorna a URL de checkout (init_point) do Mercado Pago para o frontend.
+        return response.status(200).json({ checkoutUrl: result.init_point });
 
     } catch (error) {
         console.error("Erro ao criar preferência no Mercado Pago:", error);

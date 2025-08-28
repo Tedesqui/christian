@@ -63,9 +63,26 @@
     
     <div id="payment-modal-overlay" class="hidden">
         <div id="payment-modal">
-            <h2 class="text-2xl font-bold text-slate-800 mb-2" data-key="payment_title">Acesso Expirado</h2>
-            <p class="text-slate-600 mb-6" data-key="payment_description">Para continuar sua jornada de fé, é necessária uma pequena cobrança para a manutenção do nosso serviço. Assine o acesso semanal.</p>
-            <button id="subscribe-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300" data-key="payment_button">Assinar por R$ 14,90 / semana</button>
+            <div id="initial-payment-content">
+                <h2 class="text-2xl font-bold text-slate-800 mb-2" data-key="payment_title">Acesso Expirado</h2>
+                <p class="text-slate-600 mb-6" data-key="payment_description">Para continuar sua jornada de fé, é necessária uma pequena cobrança para a manutenção do nosso serviço. Assine o acesso semanal.</p>
+                <button id="subscribe-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300" data-key="payment_button">Assinar por R$ 14,90 / semana</button>
+            </div>
+
+            <div id="pix-payment-content" class="hidden">
+                <h3 class="text-xl font-bold text-slate-800 mb-2" data-key="pix_title">Pague com PIX para continuar</h3>
+                <p class="text-slate-600 mb-4" data-key="pix_instructions">1. Abra o app do seu banco e escaneie o código abaixo.</p>
+                <img id="pix-qr-code" src="" alt="PIX QR Code" class="mx-auto mb-4 border rounded-lg w-48 h-48">
+                <p class="text-slate-600 mb-4" data-key="pix_instructions_2">2. Ou copie o código e cole no seu app:</p>
+                <div class="relative bg-slate-100 p-2 rounded-lg mb-2">
+                    <input type="text" id="pix-copy-code" readonly class="w-full bg-transparent border-none text-slate-600 text-sm pr-16">
+                    <button id="copy-pix-button" class="absolute right-1 top-1/2 -translate-y-1/2 bg-blue-500 text-white text-xs font-semibold py-1 px-2 rounded hover:bg-blue-600" data-key="pix_copy_button">Copiar</button>
+                </div>
+                <p id="copy-success-message" class="text-green-600 text-sm hidden" data-key="pix_copied_message">Código copiado!</p>
+                <div class="mt-6">
+                    <p class="text-sm text-slate-500 animate-pulse" data-key="pix_waiting_payment">Aguardando confirmação do pagamento...</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -77,13 +94,20 @@
         const micWrapper = micButton.parentElement;
         const paymentModalOverlay = document.getElementById('payment-modal-overlay');
         const subscribeButton = document.getElementById('subscribe-button');
+        const initialPaymentContent = document.getElementById('initial-payment-content');
+        const pixPaymentContent = document.getElementById('pix-payment-content');
+        const pixQrCodeImg = document.getElementById('pix-qr-code');
+        const pixCopyCodeInput = document.getElementById('pix-copy-code');
+        const copyPixButton = document.getElementById('copy-pix-button');
+        const copySuccessMessage = document.getElementById('copy-success-message');
 
         const FREE_MESSAGES_LIMIT = 3;
         let userMessageCount = parseInt(localStorage.getItem('userMessageCount') || '0');
         let accessExpiry = parseInt(localStorage.getItem('accessExpiry') || '0');
+        let paymentCheckInterval = null;
 
         const translations = {
-            "pt": { "title": "IA Cristã - Um Diálogo de Fé", "header_alt": "Imagem de Jesus Cristo", "header_title": "IA Cristã", "header_subtitle": "O seu companheiro para reflexão e estudo da Palavra.", "welcome_message": "Paz do Senhor! Eu sou o seu assistente virtual cristão. Estou aqui para te ajudar a aprofundar-se na Palavra de Deus. Sinta-se à vontade para perguntar sobre versículos, personagens bíblicos, ou para conversarmos sobre os desafios da vida sob a ótica cristã.", "input_placeholder": "Fale ou escreva...", "listening": "🎙️ Ouvindo...", "typing_indicator": "A meditar na Palavra", "error_message": "Perdão, minha ovelha, ocorreu um erro. Por favor, tente novamente.", "mic_denied": "Permissão para o microfone negada. Ative nas definições do seu navegador.", "mic_error": "Ocorreu um erro no reconhecimento de voz.", "payment_title": "Acesso Expirado", "payment_description": "Para continuar sua jornada de fé, é necessária uma pequena cobrança para a manutenção do nosso serviço. Assine o acesso semanal.", "payment_button": "Assinar com PIX por R$ 14,90 / semana", "payment_required_placeholder": "Assinatura necessária para continuar...", "payment_loading": "Redirecionando para o pagamento...", "payment_success": "Obrigado pela sua oferta! Seu acesso foi restaurado por 7 dias." },
+            "pt": { "title": "IA Cristã - Um Diálogo de Fé", "header_alt": "Imagem de Jesus Cristo", "header_title": "IA Cristã", "header_subtitle": "O seu companheiro para reflexão e estudo da Palavra.", "welcome_message": "Paz do Senhor! Eu sou o seu assistente virtual cristão. Estou aqui para te ajudar a aprofundar-se na Palavra de Deus. Sinta-se à vontade para perguntar sobre versículos, personagens bíblicos, ou para conversarmos sobre os desafios da vida sob a ótica cristã.", "input_placeholder": "Fale ou escreva...", "listening": "🎙️ Ouvindo...", "typing_indicator": "A meditar na Palavra", "error_message": "Perdão, minha ovelha, ocorreu um erro. Por favor, tente novamente.", "mic_denied": "Permissão para o microfone negada. Ative nas definições do seu navegador.", "mic_error": "Ocorreu um erro no reconhecimento de voz.", "payment_title": "Acesso Expirado", "payment_description": "Para continuar sua jornada de fé, é necessária uma pequena cobrança para a manutenção do nosso serviço. Assine o acesso semanal.", "payment_button": "Assinar com PIX por R$ 14,90 / semana", "payment_required_placeholder": "Assinatura necessária para continuar...", "payment_loading": "Gerando PIX...", "payment_success": "Pagamento aprovado! Seu acesso foi restaurado por 7 dias.", "pix_title": "Pague com PIX para continuar", "pix_instructions": "1. Abra o app do seu banco e escaneie o código abaixo.", "pix_instructions_2": "2. Ou copie o código e cole no seu app:", "pix_copy_button": "Copiar", "pix_copied_message": "Código copiado!", "pix_waiting_payment": "Aguardando confirmação do pagamento..." },
             "en": { "title": "Christian AI - A Dialogue of Faith", "header_alt": "Image of Jesus Christ", "header_title": "Christian AI", "header_subtitle": "Your companion for reflection and study of the Word.", "welcome_message": "Peace of the Lord! I am your Christian virtual assistant. I am here to help you delve deeper into the Word of God. Feel free to ask about verses, biblical characters, or to talk about life's challenges from a Christian perspective.", "input_placeholder": "Speak or write...", "listening": "🎙️ Listening...", "typing_indicator": "Meditating on the Word", "error_message": "Pardon me, my sheep, an error occurred. Please try again.", "mic_denied": "Microphone permission denied. Please enable it in your browser settings.", "mic_error": "An error occurred with voice recognition.", "payment_title": "Access Expired", "payment_description": "To continue your journey of faith, a small charge is required to maintain our service. Subscribe for weekly access.", "payment_button": "Subscribe for $2.99 / week", "payment_required_placeholder": "Subscription required to continue...", "payment_loading": "Redirecting...", "payment_success": "Thank you for your offering! Your access has been restored for 7 days." },
             "es": { "title": "IA Cristiana - Un Diálogo de Fe", "header_alt": "Imagen de Jesucristo", "header_title": "IA Cristiana", "header_subtitle": "Tu compañero para la reflexión y el estudio de la Palabra.", "welcome_message": "¡Paz del Señor! Soy tu asistente virtual cristiano. Estoy aquí para ayudarte a profundizar en la Palabra de Dios. No dudes en preguntar sobre versículos, personajes bíblicos, o para conversar sobre los desafíos de la vida desde la óptica cristiana.", "input_placeholder": "Habla o escribe...", "listening": "🎙️ Escuchando...", "typing_indicator": "Meditando en la Palabra", "error_message": "Perdón, mi oveja, ocurrió un error. Por favor, inténtalo de nuevo.", "mic_denied": "Se denegó el permiso para el micrófono. Por favor, actívalo en la configuración de tu navegador.", "mic_error": "Ocurrió un error con el reconocimiento de voz.", "payment_title": "Acceso Expirado", "payment_description": "Para continuar tu viaje de fe, se requiere un pequeño cobro para el mantenimiento de nuestro servicio. Suscríbete para el acceso semanal.", "payment_button": "Suscribir por $2.99 / semana", "payment_required_placeholder": "Se requiere suscripción para continuar...", "payment_loading": "Redirigiendo...", "payment_success": "¡Gracias por tu ofrenda! Tu acceso ha sido restaurado por 7 días." },
             "it": { "title": "IA Cristiana - Un Dialogo di Fede", "header_alt": "Immagine di Gesù Cristo", "header_title": "IA Cristiana", "header_subtitle": "Il tuo compagno per la riflessione e lo studio della Parola.", "welcome_message": "Pace del Signore! Sono il tuo assistente virtuale cristiano. Sono qui per aiutarti ad approfondire la Parola di Dio. Sentiti libero di chiedere versetti, personaggi biblici o di parlare delle sfide della vita da una prospettiva cristiana.", "input_placeholder": "Parla o scrivi...", "listening": "🎙️ In ascolto...", "typing_indicator": "Meditando sulla Parola", "error_message": "Perdona, mia pecora, si è verificato un errore. Per favore, riprova.", "mic_denied": "Permesso per il microfono negato. Abilitalo nelle impostazioni del browser.", "mic_error": "Si è verificato un errore con il riconoscimento vocale.", "payment_title": "Accesso Scaduto", "payment_description": "Per continuare il tuo cammino di fede, è richiesto un piccolo contributo per mantenere il nostro servizio. Abbonati per l'accesso settimanale.", "payment_button": "Abbonati per 2,99 € / settimana", "payment_required_placeholder": "Abbonamento richiesto per continuare...", "payment_loading": "Reindirizzamento...", "payment_success": "Grazie per la tua offerta! Il tuo accesso è stato ripristinato per 7 giorni." },
@@ -91,7 +115,7 @@
             "de": { "title": "Christliche KI - Ein Dialog des Glaubens", "header_alt": "Bild von Jesus Christus", "header_title": "Christliche KI", "header_subtitle": "Ihr Begleiter zur Besinnung und zum Studium des Wortes.", "welcome_message": "Friede des Herrn! Ich bin Ihr christlicher virtueller Assistent. Ich bin hier, um Ihnen zu helfen, tiefer in das Wort Gottes einzutauchen. Fragen Sie gerne nach Versen, biblischen Charakteren oder sprechen Sie über die Herausforderungen des Lebens aus christlicher Sicht.", "input_placeholder": "Sprechen oder schreiben Sie...", "listening": "🎙️ Höre zu...", "typing_indicator": "Meditiere über das Wort", "error_message": "Verzeihung, mein Schaf, ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.", "mic_denied": "Mikrofonberechtigung verweigert. Bitte aktivieren Sie sie in Ihren Browsereinstellungen.", "mic_error": "Ein Fehler bei der Spracherkennung ist aufgetreten.", "payment_title": "Zugang Abgelaufen", "payment_description": "Um Ihre Glaubensreise fortzusetzen, ist eine kleine Gebühr zur Aufrechterhaltung unseres Dienstes erforderlich. Abonnieren Sie den wöchentlichen Zugang.", "payment_button": "Abonnieren für 2,99 € / Woche", "payment_required_placeholder": "Abonnement zum Fortfahren erforderlich...", "payment_loading": "Weiterleitung...", "payment_success": "Danke für Ihr Opfer! Ihr Zugang wurde für 7 Tage wiederhergestellt." },
             "ru": { "title": "Христианский ИИ - Диалог веры", "header_alt": "Изображение Иисуса Христа", "header_title": "Христианский ИИ", "header_subtitle": "Ваш спутник для размышлений и изучения Слова.", "welcome_message": "Мир Господень! Я ваш христианский виртуальный помощник. Я здесь, чтобы помочь вам глубже погрузиться в Слово Божье. Не стесняйтесь спрашивать о стихах, библейских персонажах или говорить о жизненных трудностях с христианской точки зрения.", "input_placeholder": "Говорите или пишите...", "listening": "🎙️ Слушаю...", "typing_indicator": "Размышляя над Словом", "error_message": "Прости, овца моя, произошла ошибка. Пожалуйста, попробуйте еще раз.", "mic_denied": "Доступ к микрофону запрещен. Пожалуйста, включите его в настройках вашего браузера.", "mic_error": "Произошла ошибка с распознаванием голоса.", "payment_title": "Доступ истек", "payment_description": "Чтобы продолжить ваш путь веры, требуется небольшая плата для поддержания нашего сервиса. Подпишитесь на еженедельный доступ.", "payment_button": "Подписаться за 2.99$ / неделя", "payment_required_placeholder": "Для продолжения требуется подписка...", "payment_loading": "Перенаправление...", "payment_success": "Спасибо за ваше пожертвование! Ваш доступ восстановлен на 7 дней." },
             "ja": { "title": "キリスト教AI - 信仰の対話", "header_alt": "イエス・キリストの画像", "header_title": "キリスト教AI", "header_subtitle": "みことばの黙想と研究のためのあなたの伴侶。", "welcome_message": "主の平和！私はあなたのキリスト教バーチャルアシスタントです。神の言葉をより深く探求するお手伝いをします。聖句や聖書の登場人物について、またキリスト教の観点から人生の課題についてお気軽にお尋ねください。", "input_placeholder": "話すか書いてください...", "listening": "🎙️ 聞いています...", "typing_indicator": "みことばを黙想中", "error_message": "申し訳ありません、我が羊よ、エラーが発生しました。もう一度お試しください。", "mic_denied": "マイクの許可が拒否されました。ブラウザの設定で有効にしてください。", "mic_error": "音声認識でエラーが発生しました。", "payment_title": "アクセス期限切れ", "payment_description": "信仰の旅を続けるには、サービスの維持のために少額の料金が必要です。週間アクセスに登録してください。", "payment_button": "週2.99ドルで登録", "payment_required_placeholder": "続けるには登録が必要です...", "payment_loading": "リダイレクト中...", "payment_success": "ご献金ありがとうございます！アクセスが7日間復元されました。" },
-            "ko": { "title": "기독교 AI - 신앙의 대화", "header_alt": "예수 그리스도 이미지", "header_title": "기독교 AI", "header_subtitle": "말씀 묵상과 연구를 위한 당신의 동반자.", "welcome_message": "주님의 평화! 저는 당신의 기독교 가상 비서입니다. 하나님의 말씀을 더 깊이 파고드는 데 도움을 드리기 위해 여기 있습니다. 구절, 성경 인물에 대해 자유롭게 질문하거나 기독교적 관점에서 삶의 도전에 대해 이야기하십시오.", "input_placeholder": "말하거나 쓰세요...", "listening": "🎙️ 듣고 있습니다...", "typing_indicator": "말씀을 묵상 중", "error_message": "죄송합니다, 내 양이여, 오류가 발생했습니다. 다시 시도해 주세요.", "mic_denied": "마이크 권한이 거부되었습니다. 브라우저 설정에서 활성화해 주세요.", "mic_error": "음성 인식에 오류가 발생했습니다。", "payment_title": "액세스 만료", "payment_description": "신앙의 여정을 계속하려면 서비스 유지를 위해 소액의 요금이 필요합니다. 주간 액세스를 구독하세요.", "payment_button": "주당 2.99달러에 구독", "payment_required_placeholder": "계속하려면 구독이 필요합니다...", "payment_loading": "리디렉션 중...", "payment_success": "헌금에 감사드립니다! 7일 동안 액세스가 복원되었습니다." },
+            "ko": { "title": "기독교 AI - 신앙의 대화", "header_alt": "예수 그리스도 이미지", "header_title": "기독교 AI", "header_subtitle": "말씀 묵상과 연구를 위한 당신의 동반자.", "welcome_message": "주님의 평화! 저는 당신의 기독교 가상 비서입니다. 하나님의 말씀을 더 깊이 파고드는 데 도움을 드리기 위해 여기 있습니다. 구절, 성경 인물에 대해 자유롭게 질문하거나 기독교적 관점에서 삶의 도전에 대해 이야기하십시오.", "input_placeholder": "말하거나 쓰세요...", "listening": "🎙️ 듣고 있습니다...", "typing_indicator": "말씀을 묵상 중", "error_message": "죄송합니다, 내 양이여, 오류가 발생했습니다. 다시 시도해 주세요.", "mic_denied": "마이크 권한이 거부되었습니다. 브라우저 설정에서 활성화해 주세요.", "mic_error": "음성 인식에 오류가 발생했습니다。", "payment_title": "액세스 만료", "payment_description": "신앙의 여정을 계속하려면 서비스 유지를 위해 소액의 요금이 필요합니다. 주간 액세스를 구독하세요。", "payment_button": "주당 2.99달러에 구독", "payment_required_placeholder": "계속하려면 구독이 필요합니다...", "payment_loading": "리디렉션 중...", "payment_success": "헌금에 감사드립니다! 7일 동안 액세스가 복원되었습니다。" },
             "zh": { "title": "基督教AI - 信仰的对话", "header_alt": "耶稣基督的形象", "header_title": "基督教AI", "header_subtitle": "您反思和学习圣言的伴侣。", "welcome_message": "主的平安！我是您的基督教虚拟助手。我在这里帮助您更深入地探究神的话语。欢迎随时询问经文、圣经人物，或从基督教的角度谈论生活中的挑战。", "input_placeholder": "说话或书写...", "listening": "🎙️ 正在聆听...", "typing_indicator": "默想圣言", "error_message": "对不起，我的羊，发生了错误。请再试一次。", "mic_denied": "麦克风权限被拒绝。请在您的浏览器设置中启用它。", "mic_error": "语音识别发生错误。", "payment_title": "访问已过期", "payment_description": "为了继续您的信仰之旅，需要支付少量费用来维护我们的服务。请订阅每周访问。", "payment_button": "每周2.99美元订阅", "payment_required_placeholder": "需要订阅才能继续...", "payment_loading": "正在重定向...", "payment_success": "感谢您的奉献！您的访问权限已恢复7天。" },
             "hi": { "title": "ईसाई एआई - विश्वास का एक संवाद", "header_alt": "ईसा मसीह की छवि", "header_title": "ईसाई एआई", "header_subtitle": "वचन के चिंतन और अध्ययन के लिए आपका साथी।", "welcome_message": "प्रभु की शांति! मैं आपका ईसाई आभासी सहायक हूँ। मैं यहाँ परमेश्वर के वचन में गहराई से उतरने में आपकी मदद करने के लिए हूँ। छंदों, बाइबिल के पात्रों के बारे में पूछने के लिए स्वतंत्र महसूस करें, या ईसाई दृष्टिकोण से जीवन की चुनौतियों के बारे में बात करें।", "input_placeholder": "बोलें या लिखें...", "listening": "🎙️ सुन रहा हूँ...", "typing_indicator": "वचन पर मनन कर रहा है", "error_message": "मुझे क्षमा करें, मेरी भेड़, एक त्रुटि हुई। कृपया पुन: प्रयास करें।", "mic_denied": "माइक्रोफोन की अनुमति अस्वीकृत। कृपया इसे अपने ब्राउज़र सेटिंग्स में सक्षम करें।", "mic_error": "आवाज पहचान के साथ एक त्रुटि हुई।", "payment_title": "पहुंच समाप्त हो गई", "payment_description": "अपनी आस्था की यात्रा जारी रखने के लिए, हमारी सेवा को बनाए रखने के लिए एक छोटा सा शुल्क आवश्यक है। साप्ताहिक पहुंच के लिए सदस्यता लें।", "payment_button": "प्रति सप्ताह $2.99 में सदस्यता लें", "payment_required_placeholder": "जारी रखने के लिए सदस्यता आवश्यक है...", "payment_loading": "पुनर्निर्देशित कर रहा है...", "payment_success": "आपके प्रस्ताव के लिए धन्यवाद! आपकी पहुंच 7 दिनों के लिए बहाल कर दी गई है।" },
             "fil": { "title": "Christian AI - Isang Diyalogo ng Pananampalataya", "header_alt": "Imahe ni Hesukristo", "header_title": "Christian AI", "header_subtitle": "Ang iyong kasama para sa pagninilay at pag-aaral ng Salita.", "welcome_message": "Kapayapaan ng Panginoon! Ako ang iyong Christian virtual assistant. Narito ako upang tulungan kang mas malalim na pag-aralan ang Salita ng Diyos. Huwag mag-atubiling magtanong tungkol sa mga talata, mga tauhan sa bibliya, o pag-usapan ang mga hamon sa buhay mula sa isang Kristiyanong pananaw.", "input_placeholder": "Magsalita o magsulat...", "listening": "🎙️ Nakikinig...", "typing_indicator": "Nagninilay sa Salita", "error_message": "Patawarin mo ako, aking tupa, nagkaroon ng error. Pakisubukang muli.", "mic_denied": "Tinanggihan ang pahintulot sa mikropono. Paki-enable ito sa mga setting ng iyong browser.", "mic_error": "Nagkaroon ng error sa voice recognition.", "payment_title": "Nag-expire na ang Access", "payment_description": "Upang ipagpatuloy ang iyong paglalakbay sa pananampalataya, kailangan ng maliit na bayad upang mapanatili ang aming serbisyo. Mag-subscribe para sa lingguhang access.", "payment_button": "Mag-subscribe sa halagang $2.99 / linggo", "payment_required_placeholder": "Kailangan ng subscription para magpatuloy...", "payment_loading": "Nagre-redirect...", "payment_success": "Salamat sa iyong alay! Naibalik na ang iyong access sa loob ng 7 araw." },
@@ -118,33 +142,79 @@
                 paymentModalOverlay.classList.remove('hidden');
             }
         }
-        
+
+        function grantAccessAndNotify() {
+            const sevenDays = 7 * 24 * 60 * 60 * 1000;
+            const newExpiry = Date.now() + sevenDays;
+            localStorage.setItem('accessExpiry', newExpiry.toString());
+            localStorage.removeItem('userMessageCount');
+            accessExpiry = newExpiry;
+            userMessageCount = 0;
+            
+            paymentModalOverlay.classList.add('hidden');
+            appendMessage(translations[currentLang].payment_success, 'system');
+            checkAccess();
+        }
+
+        async function startPixPaymentFlow() {
+            try {
+                const response = await fetch('/api/create-pix-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+
+                if (!response.ok) throw new Error('Falha ao gerar o PIX');
+                const data = await response.json();
+
+                pixQrCodeImg.src = `data:image/png;base64,${data.qrCodeBase64}`;
+                pixCopyCodeInput.value = data.qrCode;
+                initialPaymentContent.classList.add('hidden');
+                pixPaymentContent.classList.remove('hidden');
+
+                startPollingPaymentStatus(data.paymentId);
+
+            } catch (error) {
+                console.error("Erro no fluxo PIX:", error);
+                alert('Ocorreu um erro ao gerar o PIX. Tente novamente.');
+                subscribeButton.disabled = false;
+                subscribeButton.textContent = translations[currentLang].payment_button;
+            }
+        }
+
+        function startPollingPaymentStatus(paymentId) {
+            if (paymentCheckInterval) clearInterval(paymentCheckInterval);
+
+            const pollingStartTime = Date.now();
+            const POLLING_TIMEOUT = 5 * 60 * 1000; // 5 minutos
+
+            paymentCheckInterval = setInterval(async () => {
+                if (Date.now() - pollingStartTime > POLLING_TIMEOUT) {
+                    clearInterval(paymentCheckInterval);
+                    console.log("Polling timeout.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/check-payment-status?paymentId=${paymentId}`);
+                    const data = await response.json();
+
+                    if (data.status === 'approved') {
+                        clearInterval(paymentCheckInterval);
+                        grantAccessAndNotify();
+                    }
+                } catch (error) {
+                    console.error("Erro ao verificar status:", error);
+                }
+            }, 5000); // Verifica a cada 5 segundos
+        }
+
         subscribeButton.addEventListener('click', async () => {
             subscribeButton.disabled = true;
             subscribeButton.textContent = translations[currentLang].payment_loading;
 
-            // *** INÍCIO DA MODIFICAÇÃO ***
-            // Verifica se o idioma é português para usar PIX; caso contrário, usa Stripe.
             if (currentLang === 'pt') {
-                // Lógica para Mercado Pago (PIX)
-                try {
-                    const response = await fetch('/api/create-pix-payment', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                    });
-                    if (!response.ok) throw new Error('Falha ao criar o pagamento PIX');
-                    
-                    const { checkoutUrl } = await response.json();
-                    window.location.href = checkoutUrl;
-
-                } catch (error) {
-                    console.error("Erro no Mercado Pago:", error);
-                    subscribeButton.disabled = false;
-                    subscribeButton.textContent = translations[currentLang].payment_button;
-                    alert('Ocorreu um erro ao gerar o PIX. Tente novamente.');
-                }
+                await startPixPaymentFlow();
             } else {
-                // Lógica original para Stripe (outros idiomas)
                 try {
                     const response = await fetch('/api/create-checkout-session', {
                         method: 'POST',
@@ -160,15 +230,19 @@
                     console.error("Stripe Error:", error);
                     subscribeButton.disabled = false;
                     subscribeButton.textContent = translations[currentLang].payment_button;
-                    alert('An error occurred while initiating payment. Please try again.');
                 }
             }
-            // *** FIM DA MODIFICAÇÃO ***
+        });
+
+        copyPixButton.addEventListener('click', () => {
+            pixCopyCodeInput.select();
+            document.execCommand('copy');
+            copySuccessMessage.classList.remove('hidden');
+            setTimeout(() => copySuccessMessage.classList.add('hidden'), 2000);
         });
 
         function setLanguage(lang) {
-            // Normaliza o código do idioma para os dois primeiros caracteres (ex: 'pt-BR' -> 'pt')
-            const langCode = (lang || 'pt-BR').split('-')[0];
+            const langCode = (lang || 'pt').split('-')[0];
             currentLang = translations[langCode] ? langCode : 'pt';
             
             document.documentElement.lang = currentLang;
@@ -244,12 +318,6 @@
         }
 
         sendButton.addEventListener('click', () => sendMessage());
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognitionActive = false;
@@ -259,8 +327,9 @@
             recognition.interimResults = false;
 
             micButton.addEventListener('mousedown', () => {
-                if (userInput.disabled || recognitionActive) return;
-                recognition.lang = currentLang === 'pt' ? 'pt-BR' : (currentLang === 'en' ? 'en-US' : currentLang);
+                if (userInput.disabled) return;
+                if (recognitionActive) return;
+                recognition.lang = currentLang === 'en' ? 'en-US' : `${currentLang}-${currentLang.toUpperCase()}`;
                 recognitionActive = true;
                 micWrapper.classList.add('recording');
                 if (navigator.vibrate) navigator.vibrate(100);
@@ -268,17 +337,15 @@
                 appendMessage(translations[currentLang].listening, 'system');
             });
 
-            const stopRecognition = () => {
+            micButton.addEventListener('mouseup', () => {
                 if (!recognitionActive) return;
                 recognitionActive = false;
                 micWrapper.classList.remove('recording');
                 recognition.stop();
                 removeSystemMessage();
-            };
+            });
 
-            micButton.addEventListener('mouseup', stopRecognition);
-            micButton.addEventListener('mouseleave', stopRecognition);
-            micButton.addEventListener('touchstart', (e) => { e.preventDefault(); micButton.dispatchEvent(new Event('mousedown')); }, { passive: false });
+            micButton.addEventListener('touchstart', (e) => { e.preventDefault(); micButton.dispatchEvent(new Event('mousedown')); });
             micButton.addEventListener('touchend', (e) => { e.preventDefault(); micButton.dispatchEvent(new Event('mouseup')); });
 
             recognition.onresult = (event) => {
@@ -295,11 +362,11 @@
                 removeSystemMessage();
                 appendMessage(errorMessage, 'system-error');
             };
-            
-            recognition.onspeechend = () => {
-                stopRecognition();
-            };
 
+            recognition.onspeechend = () => {
+                recognition.stop();
+                removeSystemMessage();
+            };
         } else {
             micWrapper.style.display = 'none';
         }
@@ -343,28 +410,25 @@
             const indicator = document.getElementById('typing-indicator');
             if (indicator) indicator.remove();
         }
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
         
         window.addEventListener('load', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const sessionId = urlParams.get('session_id');
 
-            // Lógica de ativação pós-pagamento (funciona tanto para Stripe quanto para Mercado Pago)
             if (sessionId) {
-                const sevenDays = 7 * 24 * 60 * 60 * 1000;
-                const newExpiry = Date.now() + sevenDays;
-                localStorage.setItem('accessExpiry', newExpiry.toString());
-                localStorage.removeItem('userMessageCount');
-                accessExpiry = newExpiry;
-                userMessageCount = 0;
-                
-                // Limpa a URL para evitar reativação ao recarregar a página
+                grantAccessAndNotify();
                 window.history.replaceState(null, '', window.location.pathname);
-                appendMessage(translations[currentLang].payment_success, 'system');
             }
             
-            // Detecta o idioma do navegador do usuário para configurar a interface
             const userLang = navigator.language || navigator.userLanguage;
-            setLanguage(userLang.startsWith('pt') ? 'pt' : userLang); // Garante que pt-BR, pt-PT, etc., sejam tratados como 'pt'
+            setLanguage(userLang.startsWith('pt') ? 'pt' : userLang);
             userInput.focus();
         });
     </script>

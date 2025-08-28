@@ -27,7 +27,7 @@ export default async function handler(request, response) {
                     description: '7 dias de acesso para conversar com seu assistente de fé.',
                     quantity: 1,
                     currency_id: 'BRL',
-                    unit_price: 14.90,
+                    unit_price: 1.00,
                 },
             ],
             // Especificamos que queremos apenas PIX, excluindo outros métodos.

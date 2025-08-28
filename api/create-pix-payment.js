@@ -18,7 +18,7 @@ export default async function handler(request, response) {
         const idempotencyKey = crypto.randomUUID();
 
         const body = {
-            transaction_amount: 14.90,
+            transaction_amount: 1.00,
             description: 'Acesso Semanal - IA Cristã',
             payment_method_id: 'pix',
             payer: {

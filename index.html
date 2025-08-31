@@ -111,43 +111,71 @@
 
         const FREE_MESSAGES_LIMIT = 3;
         let userMessageCount = parseInt(localStorage.getItem('userMessageCount') || '0');
-        let accessExpiry = parseInt(localStorage.getItem('accessExpiry') || '0');
         let paymentCheckInterval = null;
 
         const translations = {
-            "pt": { "title": "IA Cristã - Um Diálogo de Fé", "header_alt": "Imagem de Jesus Cristo", "header_title": "IA Cristã", "header_subtitle": "O seu companheiro para reflexão e estudo da Palavra.", "welcome_message": "Paz do Senhor! Eu sou o seu assistente virtual cristão. Estou aqui para te ajudar a aprofundar-se na Palavra de Deus. Sinta-se à vontade para perguntar sobre versículos, personagens bíblicos, ou para conversarmos sobre os desafios da vida sob a ótica cristã.", "input_placeholder": "Fale ou escreva...", "listening": "🎙️ Ouvindo...", "typing_indicator": "A meditar na Palavra", "error_message": "Perdão, minha ovelha, ocorreu um erro. Por favor, tente novamente.", "mic_denied": "Permissão para o microfone negada. Ative nas definições do seu navegador.", "mic_error": "Ocorreu um erro no reconhecimento de voz.", "payment_title": "Acesso Expirado", "payment_description": "Para continuar sua jornada de fé, é necessária uma pequena cobrança para a manutenção do nosso serviço. Assine o acesso semanal.", "payment_button": "Assinar por R$ 14,90 / semana", "payment_required_placeholder": "Assinatura necessária para continuar...", "payment_loading": "Redirecionando...", "payment_success": "Pagamento aprovado! Seu acesso foi restaurado por 7 dias.", "pix_email_info": "Para gerar o QR Code, por favor, informe seu e-mail.", "pix_email_placeholder": "seuemail@exemplo.com", "pix_generate_button": "Gerar PIX", "pix_generating": "Aguarde...", "pix_scan_or_copy": "Escaneie o QR Code ou use o Copia e Cola:", "pix_copy_button": "Copiar", "pix_copied_button": "Copiado!", "pix_waiting_payment": "Aguardando pagamento...", "pix_payment_approved": "Pagamento Aprovado! Liberando seu acesso...", "pix_invalid_email": "Por favor, insira um e-mail válido.", "pix_error_generating": "Erro ao gerar o PIX. Tente novamente.", "storage_error_alert": "Seu acesso foi aprovado, mas o navegador está impedindo que ele seja salvo.\n\nIsso pode acontecer se você estiver na NAVEGAÇÃO ANÔNIMA ou se as configurações de privacidade estiverem muito restritas.\n\nPor favor, use uma janela normal do navegador ou ajuste as configurações de dados de site e atualize a página." },
-            "en": { "title": "Christian AI - A Dialogue of Faith", "header_alt": "Image of Jesus Christ", "header_title": "Christian AI", "header_subtitle": "Your companion for reflection and study of the Word.", "welcome_message": "Peace of the Lord! I am your Christian virtual assistant. I am here to help you delve deeper into the Word of God. Feel free to ask about verses, biblical characters, or to talk about life's challenges from a Christian perspective.", "input_placeholder": "Speak or write...", "listening": "🎙️ Listening...", "typing_indicator": "Meditating on the Word", "error_message": "Pardon me, my sheep, an error occurred. Please try again.", "mic_denied": "Microphone permission denied. Please enable it in your browser settings.", "mic_error": "An error occurred with voice recognition.", "payment_title": "Access Expired", "payment_description": "To continue your journey of faith, a small charge is required to maintain our service. Subscribe for weekly access.", "payment_button": "Subscribe for $2.99 / week", "payment_required_placeholder": "Subscription required to continue...", "payment_loading": "Redirecting...", "payment_success": "Thank you for your offering! Your access has been restored for 7 days.", "storage_error_alert": "Your access has been approved, but the browser is preventing it from being saved.\n\nThis can happen if you are in INCOGNITO MODE or if privacy settings are too strict.\n\nPlease use a normal browser window or adjust your site data settings and refresh the page." },
-            "es": { "title": "IA Cristiana - Un Diálogo de Fe", "header_alt": "Imagen de Jesucristo", "header_title": "IA Cristiana", "header_subtitle": "Tu compañero para la reflexión y el estudio de la Palabra.", "welcome_message": "¡Paz del Señor! Soy tu asistente virtual cristiano. Estoy aquí para ayudarte a profundizar en la Palabra de Dios. No dudes en preguntar sobre versículos, personajes bíblicos, o para conversar sobre los desafíos de la vida desde la óptica cristiana.", "input_placeholder": "Habla o escribe...", "listening": "🎙️ Escuchando...", "typing_indicator": "Meditando en la Palabra", "error_message": "Perdón, mi oveja, ocurrió un error. Por favor, inténtalo de nuevo.", "mic_denied": "Se denegó el permiso para el micrófono. Por favor, actívalo en la configuración de tu navegador.", "mic_error": "Ocurrió un error con el reconocimiento de voz.", "payment_title": "Acceso Expirado", "payment_description": "Para continuar tu viaje de fe, se requiere un pequeño cobro para el mantenimiento de nuestro servicio. Suscríbete para el acceso semanal.", "payment_button": "Suscribir por $2.99 / semana", "payment_required_placeholder": "Se requiere suscripción para continuar...", "payment_loading": "Redirigiendo...", "payment_success": "¡Gracias por tu ofrenda! Tu acceso ha sido restaurado por 7 días.", "storage_error_alert": "Su acceso ha sido aprobado, pero el navegador impide que se guarde.\n\nEsto puede ocurrir si está en MODO INCÓGNITO o si la configuración de privacidad es demasiado estricta.\n\nUtilice una ventana normal del navegador o ajuste la configuración de datos del sitio y actualice la página." },
-            "it": { "title": "IA Cristiana - Un Dialogo di Fede", "header_alt": "Immagine di Gesù Cristo", "header_title": "IA Cristiana", "header_subtitle": "Il tuo compagno per la riflessione e lo studio della Parola.", "welcome_message": "Pace del Signore! Sono il tuo assistente virtuale cristiano. Sono qui per aiutarti ad approfondire la Parola di Dio. Sentiti libero di chiedere versetti, personaggi biblici o di parlare delle sfide della vita da una prospettiva cristiana.", "input_placeholder": "Parla o scrivi...", "listening": "🎙️ In ascolto...", "typing_indicator": "Meditando sulla Parola", "error_message": "Perdona, mia pecora, si è verificato un errore. Per favore, riprova.", "mic_denied": "Permesso per il microfono negato. Abilitalo nelle impostazioni del browser.", "mic_error": "Si è verificato un errore con il riconoscimento vocale.", "payment_title": "Accesso Scaduto", "payment_description": "Per continuare il tuo cammino di fede, è richiesto un piccolo contributo per mantenere il nostro servizio. Abbonati per l'accesso settimanale.", "payment_button": "Abbonati per 2,99 € / settimana", "payment_required_placeholder": "Abbonamento richiesto per continuare...", "payment_loading": "Reindirizzamento...", "payment_success": "Grazie per la tua offerta! Il tuo accesso è stato ripristinato per 7 giorni.", "storage_error_alert": "Il tuo accesso è stato approvato, ma il browser ne impedisce il salvataggio.\n\nCiò può accadere se sei in MODALITÀ INCOGNITO o se le impostazioni sulla privacy sono troppo restrittive.\n\nUtilizza una normale finestra del browser o modifica le impostazioni dei dati del sito e aggiorna la pagina." },
-            "fr": { "title": "IA Chrétienne - Un Dialogue de Foi", "header_alt": "Image de Jésus-Christ", "header_title": "IA Chrétienne", "header_subtitle": "Votre compagnon pour la réflexion et l'étude de la Parole.", "welcome_message": "Paix du Seigneur ! Je suis votre assistant virtuel chrétien. Je suis ici pour vous aider à approfondir la Parole de Dieu. N'hésitez pas à poser des questions sur des versets, des personnages bibliques, ou à parler des défis de la vie d'un point de vue chrétien.", "input_placeholder": "Parlez ou écrivez...", "listening": "🎙️ Écoute...", "typing_indicator": "Méditation sur la Parole", "error_message": "Pardon, mon mouton, une erreur est survenue. Veuillez réessayer.", "mic_denied": "Permission du microphone refusée. Veuillez l'activer dans les paramètres de votre navigateur.", "mic_error": "Une erreur est survenue avec la reconnaissance vocale.", "payment_title": "Accès Expiré", "payment_description": "Pour continuer votre chemin de foi, une petite charge est requise pour maintenir notre service. Abonnez-vous pour un accès hebdomadaire.", "payment_button": "S'abonner pour 2,99 € / semaine", "payment_required_placeholder": "Abonnement requis pour continuer...", "payment_loading": "Redirection...", "payment_success": "Merci pour votre offrande ! Votre accès a été restauré pour 7 jours.", "storage_error_alert": "Votre accès a été approuvé, mais le navigateur en empêche l'enregistrement.\n\nCela peut se produire si vous êtes en MODE INCOGNITO ou si les paramètres de confidentialité sont trop stricts.\n\nVeuillez utiliser une fenêtre de navigateur normale ou ajuster les paramètres de données de votre site et actualiser la page." },
-            "de": { "title": "Christliche KI - Ein Dialog des Glaubens", "header_alt": "Bild von Jesus Christus", "header_title": "Christliche KI", "header_subtitle": "Ihr Begleiter zur Besinnung und zum Studium des Wortes.", "welcome_message": "Friede des Herrn! Ich bin Ihr christlicher virtueller Assistent. Ich bin hier, um Ihnen zu helfen, tiefer in das Wort Gottes einzutauchen. Fragen Sie gerne nach Versen, biblischen Charakteren oder sprechen Sie über die Herausforderungen des Lebens aus christlicher Sicht.", "input_placeholder": "Sprechen oder schreiben Sie...", "listening": "🎙️ Höre zu...", "typing_indicator": "Meditiere über das Wort", "error_message": "Verzeihung, mein Schaf, ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.", "mic_denied": "Mikrofonberechtigung verweigert. Bitte aktivieren Sie sie in Ihren Browsereinstellungen.", "mic_error": "Ein Fehler bei der Spracherkennung ist aufgetreten.", "payment_title": "Zugang Abgelaufen", "payment_description": "Um Ihre Glaubensreise fortzusetzen, ist eine kleine Gebühr zur Aufrechterhaltung unseres Dienstes erforderlich. Abonnieren Sie den wöchentlichen Zugang.", "payment_button": "Abonnieren für 2,99 € / Woche", "payment_required_placeholder": "Abonnement zum Fortfahren erforderlich...", "payment_loading": "Weiterleitung...", "payment_success": "Danke für Ihr Opfer! Ihr Zugang wurde für 7 Tage wiederhergestellt.", "storage_error_alert": "Ihr Zugang wurde genehmigt, aber der Browser verhindert das Speichern.\n\nDies kann passieren, wenn Sie sich im INKOGNITO-MODUS befinden oder die Datenschutzeinstellungen zu streng sind.\n\nBitte verwenden Sie ein normales Browserfenster oder passen Sie Ihre Website-Dateneinstellungen an und aktualisieren Sie die Seite." }
+            "pt": { "title": "IA Cristã - Um Diálogo de Fé", "header_alt": "Imagem de Jesus Cristo", "header_title": "IA Cristã", "header_subtitle": "O seu companheiro para reflexão e estudo da Palavra.", "welcome_message": "Paz do Senhor! Eu sou o seu assistente virtual cristão. Estou aqui para te ajudar a aprofundar-se na Palavra de Deus. Sinta-se à vontade para perguntar sobre versículos, personagens bíblicos, ou para conversarmos sobre os desafios da vida sob a ótica cristã.", "input_placeholder": "Fale ou escreva...", "listening": "🎙️ Ouvindo...", "typing_indicator": "A meditar na Palavra", "error_message": "Perdão, minha ovelha, ocorreu um erro. Por favor, tente novamente.", "mic_denied": "Permissão para o microfone negada. Ative nas definições do seu navegador.", "mic_error": "Ocorreu um erro no reconhecimento de voz.", "payment_title": "Acesso Expirado", "payment_description": "Para continuar sua jornada de fé, é necessária uma pequena cobrança para a manutenção do nosso serviço. Assine o acesso semanal.", "payment_button": "Assinar por R$ 14,90 / semana", "payment_required_placeholder": "Assinatura necessária para continuar...", "payment_loading": "Redirecionando...", "payment_success": "Pagamento aprovado! Seu acesso foi restaurado por 7 dias.", "pix_email_info": "Para gerar o QR Code, por favor, informe seu e-mail.", "pix_email_placeholder": "seuemail@exemplo.com", "pix_generate_button": "Gerar PIX", "pix_generating": "Aguarde...", "pix_scan_or_copy": "Escaneie o QR Code ou use o Copia e Cola:", "pix_copy_button": "Copiar", "pix_copied_button": "Copiado!", "pix_waiting_payment": "Aguardando pagamento...", "pix_payment_approved": "Pagamento Aprovado! Liberando seu acesso...", "pix_invalid_email": "Por favor, insira um e-mail válido.", "pix_error_generating": "Erro ao gerar o PIX. Tente novamente." },
+            "en": { "title": "Christian AI - A Dialogue of Faith", "header_alt": "Image of Jesus Christ", "header_title": "Christian AI", "header_subtitle": "Your companion for reflection and study of the Word.", "welcome_message": "Peace of the Lord! I am your Christian virtual assistant. I am here to help you delve deeper into the Word of God. Feel free to ask about verses, biblical characters, or to talk about life's challenges from a Christian perspective.", "input_placeholder": "Speak or write...", "listening": "🎙️ Listening...", "typing_indicator": "Meditating on the Word", "error_message": "Pardon me, my sheep, an error occurred. Please try again.", "mic_denied": "Microphone permission denied. Please enable it in your browser settings.", "mic_error": "An error occurred with voice recognition.", "payment_title": "Access Expired", "payment_description": "To continue your journey of faith, a small charge is required to maintain our service. Subscribe for weekly access.", "payment_button": "Subscribe for $2.99 / week", "payment_required_placeholder": "Subscription required to continue...", "payment_loading": "Redirecting...", "payment_success": "Thank you for your offering! Your access has been restored for 7 days." },
+            "es": { "title": "IA Cristiana - Un Diálogo de Fe", "header_alt": "Imagen de Jesucristo", "header_title": "IA Cristiana", "header_subtitle": "Tu compañero para la reflexión y el estudio de la Palabra.", "welcome_message": "¡Paz del Señor! Soy tu asistente virtual cristiano. Estoy aquí para ayudarte a profundizar en la Palabra de Dios. No dudes en preguntar sobre versículos, personajes bíblicos, o para conversar sobre los desafíos de la vida desde la óptica cristiana.", "input_placeholder": "Habla o escribe...", "listening": "🎙️ Escuchando...", "typing_indicator": "Meditando en la Palabra", "error_message": "Perdón, mi oveja, ocurrió un error. Por favor, inténtalo de nuevo.", "mic_denied": "Se denegó el permiso para el micrófono. Por favor, actívalo en la configuración de tu navegador.", "mic_error": "Ocurrió un error con el reconocimiento de voz.", "payment_title": "Acceso Expirado", "payment_description": "Para continuar tu viaje de fe, se requiere un pequeño cobro para el mantenimiento de nuestro servicio. Suscríbete para el acceso semanal.", "payment_button": "Suscribir por $2.99 / semana", "payment_required_placeholder": "Se requiere suscripción para continuar...", "payment_loading": "Redirigiendo...", "payment_success": "¡Gracias por tu ofrenda! Tu acceso ha sido restaurado por 7 días." },
+            "it": { "title": "IA Cristiana - Un Dialogo di Fede", "header_alt": "Immagine di Gesù Cristo", "header_title": "IA Cristiana", "header_subtitle": "Il tuo compagno per la riflessione e lo studio della Parola.", "welcome_message": "Pace del Signore! Sono il tuo assistente virtuale cristiano. Sono qui per aiutarti ad approfondire la Parola di Dio. Sentiti libero di chiedere versetti, personaggi biblici o di parlare delle sfide della vita da una prospettiva cristiana.", "input_placeholder": "Parla o scrivi...", "listening": "🎙️ In ascolto...", "typing_indicator": "Meditando sulla Parola", "error_message": "Perdona, mia pecora, si è verificato un errore. Per favore, riprova.", "mic_denied": "Permesso per il microfono negato. Abilitalo nelle impostazioni del browser.", "mic_error": "Si è verificato un errore con il riconoscimento vocale.", "payment_title": "Accesso Scaduto", "payment_description": "Per continuare il tuo cammino di fede, è richiesto un piccolo contributo per mantenere il nostro servizio. Abbonati per l'accesso settimanale.", "payment_button": "Abbonati per 2,99 € / settimana", "payment_required_placeholder": "Abbonamento richiesto per continuare...", "payment_loading": "Reindirizzamento...", "payment_success": "Grazie per la tua offerta! Il tuo accesso è stato ripristinato per 7 giorni." },
+            "fr": { "title": "IA Chrétienne - Un Dialogue de Foi", "header_alt": "Image de Jésus-Christ", "header_title": "IA Chrétienne", "header_subtitle": "Votre compagnon pour la réflexion et l'étude de la Parole.", "welcome_message": "Paix du Seigneur ! Je suis votre assistant virtuel chrétien. Je suis ici pour vous aider à approfondir la Parole de Dieu. N'hésitez pas à poser des questions sur des versets, des personnages bibliques, ou à parler des défis de la vie d'un point de vue chrétien.", "input_placeholder": "Parlez ou écrivez...", "listening": "🎙️ Écoute...", "typing_indicator": "Méditation sur la Parole", "error_message": "Pardon, mon mouton, une erreur est survenue. Veuillez réessayer.", "mic_denied": "Permission du microphone refusée. Veuillez l'activer dans les paramètres de votre navigateur.", "mic_error": "Une erreur est survenue avec la reconnaissance vocale.", "payment_title": "Accès Expiré", "payment_description": "Pour continuer votre chemin de foi, une petite charge est requise pour maintenir notre service. Abonnez-vous pour un accès hebdomadaire.", "payment_button": "S'abonner pour 2,99 € / semaine", "payment_required_placeholder": "Abonnement requis pour continuer...", "payment_loading": "Redirection...", "payment_success": "Merci pour votre offrande ! Votre accès a été restauré pour 7 jours." },
+            "de": { "title": "Christliche KI - Ein Dialog des Glaubens", "header_alt": "Bild von Jesus Christus", "header_title": "Christliche KI", "header_subtitle": "Ihr Begleiter zur Besinnung und zum Studium des Wortes.", "welcome_message": "Friede des Herrn! Ich bin Ihr christlicher virtueller Assistent. Ich bin hier, um Ihnen zu helfen, tiefer in das Wort Gottes einzutauchen. Fragen Sie gerne nach Versen, biblischen Charakteren oder sprechen Sie über die Herausforderungen des Lebens aus christlicher Sicht.", "input_placeholder": "Sprechen oder schreiben Sie...", "listening": "🎙️ Höre zu...", "typing_indicator": "Meditiere über das Wort", "error_message": "Verzeihung, mein Schaf, ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.", "mic_denied": "Mikrofonberechtigung verweigert. Bitte aktivieren Sie sie in Ihren Browsereinstellungen.", "mic_error": "Ein Fehler bei der Spracherkennung ist aufgetreten.", "payment_title": "Zugang Abgelaufen", "payment_description": "Um Ihre Glaubensreise fortzusetzen, ist eine kleine Gebühr zur Aufrechterhaltung unseres Dienstes erforderlich. Abonnieren Sie den wöchentlichen Zugang.", "payment_button": "Abonnieren für 2,99 € / Woche", "payment_required_placeholder": "Abonnement zum Fortfahren erforderlich...", "payment_loading": "Weiterleitung...", "payment_success": "Danke für Ihr Opfer! Ihr Zugang wurde für 7 Tage wiederhergestellt." }
         };
-        
+
         let currentLang = 'pt';
 
-        function getSessionId() { let sid = localStorage.getItem("ia_crista_session_id"); if (!sid || sid.length < 10) { sid = crypto.randomUUID(); localStorage.setItem("ia_crista_session_id", sid); } return sid; }
-        function hasActiveAccess() { return Date.now() < accessExpiry; }
-        function checkAccess() { if (hasActiveAccess() || userMessageCount < FREE_MESSAGES_LIMIT) { userInput.disabled = false; paymentModalOverlay.classList.add('hidden'); userInput.placeholder = translations[currentLang].input_placeholder; } else { userInput.disabled = true; userInput.placeholder = translations[currentLang].payment_required_placeholder; paymentModalOverlay.classList.remove('hidden'); } }
+        function getSessionId() {
+            let sid = localStorage.getItem("ia_crista_session_id");
+            if (!sid || sid.length < 10) {
+                sid = crypto.randomUUID();
+                localStorage.setItem("ia_crista_session_id", sid);
+            }
+            return sid;
+        }
 
+        // *** LÓGICA DE VERIFICAÇÃO ATUALIZADA ***
+        function hasValidAccess() {
+            const token = localStorage.getItem('iaCristaAccessToken');
+            if (!token) return false;
+            try {
+                const { expiry } = JSON.parse(token);
+                return Date.now() < expiry;
+            } catch (e) {
+                localStorage.removeItem('iaCristaAccessToken'); // Limpa token inválido
+                return false;
+            }
+        }
+        
+        function checkAccess() {
+            if (hasValidAccess() || userMessageCount < FREE_MESSAGES_LIMIT) {
+                userInput.disabled = false;
+                paymentModalOverlay.classList.add('hidden');
+                userInput.placeholder = translations[currentLang]?.input_placeholder || translations['en'].input_placeholder;
+            } else {
+                userInput.disabled = true;
+                userInput.placeholder = translations[currentLang]?.payment_required_placeholder || translations['en'].payment_required_placeholder;
+                paymentModalOverlay.classList.remove('hidden');
+            }
+        }
+
+        // *** LÓGICA DE SALVAMENTO ATUALIZADA ***
         function grantAccessAndNotify() {
             try {
                 const sevenDays = 7 * 24 * 60 * 60 * 1000;
                 const newExpiry = Date.now() + sevenDays;
                 
-                localStorage.setItem('accessExpiry', newExpiry.toString());
+                const token = JSON.stringify({ expiry: newExpiry });
+                localStorage.setItem('iaCristaAccessToken', token);
                 localStorage.removeItem('userMessageCount');
                 
-                accessExpiry = newExpiry;
                 userMessageCount = 0;
                 
                 paymentModalOverlay.classList.add('hidden');
-                appendMessage(translations[currentLang].payment_success, 'system');
+                appendMessage(translations[currentLang]?.payment_success || translations['en'].payment_success, 'system');
                 checkAccess();
             } catch (error) {
                 console.error("Erro ao salvar o acesso no localStorage:", error);
-                alert(translations[currentLang].storage_error_alert);
-                paymentModalOverlay.classList.add('hidden');
-                checkAccess();
+                alert("Ocorreu um erro ao salvar seu acesso. Verifique as configurações de privacidade do seu navegador e tente novamente.");
             }
         }
 
@@ -160,7 +188,7 @@
                         const data = await response.json();
                         if (data.paid) {
                             clearInterval(paymentCheckInterval);
-                            pixStatusText.textContent = translations[currentLang].pix_payment_approved;
+                            pixStatusText.textContent = translations[currentLang]?.pix_payment_approved || translations['en'].pix_payment_approved;
                             setTimeout(grantAccessAndNotify, 1500);
                         }
                     }
@@ -175,20 +203,20 @@
                 pixEmailContent.classList.remove('hidden');
             } else {
                 subscribeButton.disabled = true;
-                subscribeButton.textContent = translations[currentLang].payment_loading;
+                subscribeButton.textContent = translations[currentLang]?.payment_loading || translations['en'].payment_loading;
                 fetch('/api/create-checkout-session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ langCode: currentLang }), })
                 .then(res => res.json())
                 .then(({ checkoutUrl }) => { window.location.href = checkoutUrl; })
-                .catch(error => { console.error("Stripe Error:", error); subscribeButton.disabled = false; subscribeButton.textContent = translations[currentLang].payment_button; });
+                .catch(error => { console.error("Stripe Error:", error); subscribeButton.disabled = false; subscribeButton.textContent = translations[currentLang]?.payment_button || translations['en'].payment_button; });
             }
         });
 
         pixForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const email = pixEmailInput.value;
-            if (!/^\S+@\S+\.\S+$/.test(email)) { alert(translations[currentLang].pix_invalid_email); return; }
+            if (!/^\S+@\S+\.\S+$/.test(email)) { alert(translations[currentLang]?.pix_invalid_email || translations['en'].pix_invalid_email); return; }
             generatePixBtn.disabled = true;
-            generatePixBtn.textContent = translations[currentLang].pix_generating;
+            generatePixBtn.textContent = translations[currentLang]?.pix_generating || translations['en'].pix_generating;
             try {
                 const response = await fetch('/api/create-pix-payment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: getSessionId(), email: email }), });
                 const data = await response.json();
@@ -198,17 +226,17 @@
                 pixEmailContent.classList.add('hidden');
                 pixQrCodeContent.classList.remove('hidden');
                 startPollingPaymentStatus(getSessionId());
-            } catch (error) { alert(translations[currentLang].pix_error_generating); console.error("Erro ao gerar PIX:", error); generatePixBtn.disabled = false; generatePixBtn.textContent = translations[currentLang].pix_generate_button; }
+            } catch (error) { alert(translations[currentLang]?.pix_error_generating || translations['en'].pix_error_generating); console.error("Erro ao gerar PIX:", error); generatePixBtn.disabled = false; generatePixBtn.textContent = translations[currentLang]?.pix_generate_button || translations['en'].pix_generate_button; }
         });
 
-        copyPixButton.addEventListener('click', () => { pixCopyCodeInput.select(); document.execCommand('copy'); copyPixButton.textContent = translations[currentLang].pix_copied_button; setTimeout(() => { copyPixButton.textContent = translations[currentLang].pix_copy_button; }, 2000); });
+        copyPixButton.addEventListener('click', () => { pixCopyCodeInput.select(); document.execCommand('copy'); copyPixButton.textContent = translations[currentLang]?.pix_copied_button || translations['en'].pix_copied_button; setTimeout(() => { copyPixButton.textContent = translations[currentLang]?.pix_copy_button || translations['en'].pix_copy_button; }, 2000); });
         
         function setLanguage(lang) {
             const langCode = (lang || 'pt').split('-')[0];
             currentLang = translations[langCode] ? langCode : 'pt';
             document.documentElement.lang = currentLang;
-            document.querySelectorAll('[data-key]').forEach(element => { const key = element.getAttribute('data-key'); if (translations[currentLang][key]) { if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') { element.placeholder = translations[currentLang][key]; } else if (element.tagName === 'IMG') { element.alt = translations[currentLang][key]; } else { element.textContent = translations[currentLang][key]; } } });
-            document.querySelectorAll('[data-key-placeholder]').forEach(el => { const key = el.getAttribute('data-key-placeholder'); if (translations[currentLang][key]) el.placeholder = translations[currentLang][key]; });
+            document.querySelectorAll('[data-key]').forEach(element => { const key = element.getAttribute('data-key'); const dict = translations[currentLang] || translations['en']; if (dict[key]) { if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') { element.placeholder = dict[key]; } else if (element.tagName === 'IMG') { element.alt = dict[key]; } else { element.textContent = dict[key]; } } });
+            document.querySelectorAll('[data-key-placeholder]').forEach(el => { const key = el.getAttribute('data-key-placeholder'); const dict = translations[currentLang] || translations['en']; if (dict[key]) el.placeholder = dict[key]; });
             checkAccess();
         }
         userInput.addEventListener('input', () => { if (userInput.value.trim() !== '') { sendButton.classList.remove('hidden'); micWrapper.classList.add('hidden'); } else { sendButton.classList.add('hidden'); micWrapper.classList.remove('hidden'); } });
@@ -217,7 +245,7 @@
             if (userInput.disabled) return;
             const message = directMessage || userInput.value.trim();
             if (!message) return;
-            if (!hasActiveAccess()) { userMessageCount++; localStorage.setItem('userMessageCount', userMessageCount.toString()); }
+            if (!hasValidAccess()) { userMessageCount++; localStorage.setItem('userMessageCount', userMessageCount.toString()); }
             appendMessage(message, 'user');
             if (directMessage === null) { userInput.value = ''; userInput.dispatchEvent(new Event('input')); }
             showTypingIndicator();
@@ -227,7 +255,7 @@
                 const data = await response.json();
                 removeTypingIndicator();
                 appendMessage(data.answer, 'ai');
-            } catch (error) { console.error('Erro ao comunicar com o backend:', error); removeTypingIndicator(); appendMessage(translations[currentLang].error_message, 'ai'); } finally { checkAccess(); }
+            } catch (error) { console.error('Erro ao comunicar com o backend:', error); removeTypingIndicator(); appendMessage(translations[currentLang]?.error_message || translations['en'].error_message, 'ai'); } finally { checkAccess(); }
         }
         sendButton.addEventListener('click', () => sendMessage());
         userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); sendMessage(); } });
@@ -235,17 +263,17 @@
         if (SpeechRecognition) {
             const recognition = new SpeechRecognition();
             recognition.interimResults = false;
-            micButton.addEventListener('mousedown', () => { if (userInput.disabled) return; recognition.lang = currentLang === 'en' ? 'en-US' : `${currentLang}-${currentLang.toUpperCase()}`; micWrapper.classList.add('recording'); recognition.start(); appendMessage(translations[currentLang].listening, 'system'); });
+            micButton.addEventListener('mousedown', () => { if (userInput.disabled) return; recognition.lang = currentLang === 'en' ? 'en-US' : `${currentLang}-${currentLang.toUpperCase()}`; micWrapper.classList.add('recording'); recognition.start(); appendMessage(translations[currentLang]?.listening || translations['en'].listening, 'system'); });
             micButton.addEventListener('mouseup', () => { micWrapper.classList.remove('recording'); recognition.stop(); removeSystemMessage(); });
             micButton.addEventListener('touchstart', (e) => { e.preventDefault(); micButton.dispatchEvent(new Event('mousedown')); });
             micButton.addEventListener('touchend', (e) => { e.preventDefault(); micButton.dispatchEvent(new Event('mouseup')); });
             recognition.onresult = (event) => { const transcript = event.results[0][0].transcript; if (transcript) sendMessage(transcript); };
-            recognition.onerror = (event) => { let msg = translations[currentLang].mic_error; if (event.error === 'not-allowed') { msg = translations[currentLang].mic_denied; } removeSystemMessage(); appendMessage(msg, 'system-error'); };
+            recognition.onerror = (event) => { let msg = translations[currentLang]?.mic_error || translations['en'].mic_error; if (event.error === 'not-allowed') { msg = translations[currentLang]?.mic_denied || translations['en'].mic_denied; } removeSystemMessage(); appendMessage(msg, 'system-error'); };
             recognition.onspeechend = () => { recognition.stop(); removeSystemMessage(); };
         } else { micWrapper.style.display = 'none'; }
         function appendMessage(message, sender) { const messageWrapper = document.createElement('div'); const messageBubble = document.createElement('div'); if (sender === 'user') { messageWrapper.className = 'message-user mb-4 flex justify-end'; messageBubble.className = 'bg-blue-600 text-white rounded-lg rounded-br-none p-3 max-w-lg'; } else if (sender === 'ai') { messageWrapper.className = 'message-ai mb-4 flex'; messageBubble.className = 'bg-slate-200 text-slate-800 rounded-lg rounded-bl-none p-3 max-w-lg'; } else { const existing = document.getElementById('system-message'); if (existing) existing.remove(); messageWrapper.id = 'system-message'; messageWrapper.className = 'message-system mb-4 flex justify-center'; messageBubble.className = sender === 'system-error' ? 'bg-red-100 text-red-700 rounded-lg p-2 text-xs' : 'bg-yellow-100 text-yellow-700 rounded-lg p-2 text-xs'; } messageBubble.innerHTML = `<p class="text-sm">${message.replace(/\n/g, '<br>')}</p>`; messageWrapper.appendChild(messageBubble); chatWindow.appendChild(messageWrapper); chatWindow.scrollTop = chatWindow.scrollHeight; }
         function removeSystemMessage() { const el = document.getElementById('system-message'); if (el) el.remove(); }
-        function showTypingIndicator() { const ind = `<div id="typing-indicator" class="message-ai mb-4 flex"><div class="bg-slate-200 text-slate-800 rounded-lg rounded-bl-none p-3 max-w-lg"><div class="flex items-center space-x-1"><span class="text-sm">${translations[currentLang].typing_indicator}</span><div class="h-2 w-2 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div><div class="h-2 w-2 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div><div class="h-2 w-2 bg-slate-400 rounded-full animate-bounce"></div></div></div></div>`; chatWindow.insertAdjacentHTML('beforeend', ind); chatWindow.scrollTop = chatWindow.scrollHeight; }
+        function showTypingIndicator() { const ind = `<div id="typing-indicator" class="message-ai mb-4 flex"><div class="bg-slate-200 text-slate-800 rounded-lg rounded-bl-none p-3 max-w-lg"><div class="flex items-center space-x-1"><span class="text-sm">${translations[currentLang]?.typing_indicator || translations['en'].typing_indicator}</span><div class="h-2 w-2 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div><div class="h-2 w-2 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div><div class="h-2 w-2 bg-slate-400 rounded-full animate-bounce"></div></div></div></div>`; chatWindow.insertAdjacentHTML('beforeend', ind); chatWindow.scrollTop = chatWindow.scrollHeight; }
         function removeTypingIndicator() { const el = document.getElementById('typing-indicator'); if (el) el.remove(); }
         window.addEventListener('load', () => {
             const urlParams = new URLSearchParams(window.location.search);

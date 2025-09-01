@@ -83,7 +83,17 @@
             "es": { "payment_title": "Acceso a IA Cristiana", "payment_description": "Para chatear con IA Cristiana, se requiere una pequeña contribución para el mantenimiento del servicio. Suscríbete para acceso semanal.", "payment_button": "Suscribir por $2.99 / semana", "payment_loading": "Redirigiendo..." },
             "it": { "payment_title": "Accesso a IA Cristiana", "payment_description": "Per chattare con l'IA Cristiana, è richiesto un piccolo contributo per la manutenzione del servizio. Abbonati per l'accesso settimanale.", "payment_button": "Abbonati per 2,99 € / settimana", "payment_loading": "Reindirizzamento..." },
             "fr": { "payment_title": "Accès à l'IA Chrétienne", "payment_description": "Pour discuter avec l'IA Chrétienne, une petite contribution est requise pour la maintenance du service. Abonnez-vous pour un accès hebdomadaire.", "payment_button": "S'abonner pour 2,99 € / semaine", "payment_loading": "Redirection..." },
-            "de": { "payment_title": "Zugang zur Christlichen KI", "payment_description": "Um mit der Christlichen KI zu chatten, ist ein kleiner Beitrag zur Wartung des Dienstes erforderlich. Abonnieren Sie den wöchentlichen Zugang.", "payment_button": "Abonnieren für 2,99 € / Woche", "payment_loading": "Weiterleitung..." }
+            "de": { "payment_title": "Zugang zur Christlichen KI", "payment_description": "Um mit der Christlichen KI zu chatten, ist ein kleiner Beitrag zur Wartung des Dienstes erforderlich. Abonnieren Sie den wöchentlichen Zugang.", "payment_button": "Abonnieren für 2,99 € / Woche", "payment_loading": "Weiterleitung..." },
+            "ru": { "payment_title": "Доступ к Христианскому ИИ", "payment_description": "Чтобы общаться с Христианским ИИ, требуется небольшой взнос на обслуживание сервиса. Подпишитесь на еженедельный доступ.", "payment_button": "Подписаться за $2.99 / неделя", "payment_loading": "Перенаправление..." },
+            "ja": { "payment_title": "キリスト教AIへのアクセス", "payment_description": "キリスト教AIとチャットするには、サービスの維持のために少額の寄付が必要です。週間アクセスに登録してください。", "payment_button": "週2.99ドルで登録", "payment_loading": "リダイレクト中..." },
+            "ko": { "payment_title": "기독교 AI 액세스", "payment_description": "기독교 AI와 채팅하려면 서비스 유지를 위해 약간의 기여가 필요합니다. 주간 액세스를 구독하세요.", "payment_button": "주당 $2.99에 구독", "payment_loading": "리디렉션 중..." },
+            "zh": { "payment_title": "访问基督教AI", "payment_description": "与基督教AI聊天需要为服务维护提供少量捐款。请订阅每周访问。", "payment_button": "每周2.99美元订阅", "payment_loading": "正在重定向..." },
+            "hi": { "payment_title": "ईसाई एआई तक पहुंच", "payment_description": "ईसाई एआई के साथ चैट करने के लिए, सेवा रखरखाव के लिए एक छोटे से योगदान की आवश्यकता है। साप्ताहिक पहुंच के लिए सदस्यता लें।", "payment_button": "प्रति सप्ताह $2.99 में सदस्यता लें", "payment_loading": "पुनर्निर्देशित कर रहा है..." },
+            "fil": { "payment_title": "Access sa Christian AI", "payment_description": "Upang makipag-chat sa Christian AI, kailangan ng maliit na kontribusyon para sa pagpapanatili ng serbisyo. Mag-subscribe para sa lingguhang access.", "payment_button": "Mag-subscribe sa halagang $2.99 / linggo", "payment_loading": "Nagre-redirect..." },
+            "sv": { "payment_title": "Tillgång till Kristen AI", "payment_description": "För att chatta med Kristen AI krävs ett litet bidrag för underhåll av tjänsten. Prenumerera för veckovis åtkomst.", "payment_button": "Prenumerera för $2.99 / vecka", "payment_loading": "Omdirigerar..." },
+            "pl": { "payment_title": "Dostęp do Chrześcijańskiej SI", "payment_description": "Aby rozmawiać z Chrześcijańską SI, wymagana jest niewielka opłata na utrzymanie usługi. Subskrybuj, aby uzyskać tygodniowy dostęp.", "payment_button": "Subskrybuj za 2,99 $ / tydzień", "payment_loading": "Przekierowywanie..." },
+            "bn": { "payment_title": "খ্রিস্টান এআই-তে অ্যাক্সেস", "payment_description": "খ্রিস্টান এআই-এর সাথে চ্যাট করার জন্য, পরিষেবা রক্ষণাবেক্ষণের জন্য একটি ছোট অবদান প্রয়োজন। সাপ্তাহিক অ্যাক্সেসের জন্য সাবস্ক্রাইব করুন।", "payment_button": "প্রতি সপ্তাহে $2.99 এর জন্য সাবস্ক্রাইব করুন", "payment_loading": "পুনঃনির্দেশ করা হচ্ছে..." },
+            "ar": { "payment_title": "الوصول إلى الذكاء الاصطناعي المسيحي", "payment_description": "للدردشة مع الذكاء الاصطناعي المسيحي، مطلوب مساهمة صغيرة لصيانة الخدمة. اشترك للوصول الأسبوعي.", "payment_button": "اشترك مقابل 2.99 دولارًا أمريكيًا في الأسبوع", "payment_loading": "إعادة توجيه..." }
         };
         let currentLang = 'pt';
 
@@ -127,7 +137,6 @@
 
         subscribeButton.addEventListener('click', () => {
             const userFullLanguage = (navigator.language || navigator.userLanguage).toLowerCase();
-            // *** LÓGICA CORRIGIDA PARA USAR 'pt-BR' ***
             if (userFullLanguage === 'pt-br') {
                 initialPaymentContent.classList.add('hidden');
                 pixEmailContent.classList.remove('hidden');

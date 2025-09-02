@@ -45,7 +45,7 @@
         })();
     </script>
 
-    <div id="main-container" class="flex flex-col w-screen h-screen bg-white md:w-full md:max-w-3xl md:h-[85vh] md:max-h-[900px] md:rounded-2xl md:shadow-2xl">
+    <div id="main-container" class="flex flex-col w-screen h-dvh bg-white md:w-full md:max-w-3xl md:h-[85vh] md:max-h-[900px] md:rounded-2xl md:shadow-2xl">
         <header class="bg-blue-600 text-white p-6 rounded-t-2xl shadow-md flex items-center space-x-4">
             <img src="images/jesus.jpg" alt="Imagem de Jesus Cristo" data-key="header_alt" class="h-20 w-20 rounded-full object-cover border-2 border-white" />
             <div>
@@ -178,6 +178,7 @@
                     }
                 }
             });
+
         }
 
         function appendMessage(message, sender) { const messageWrapper = document.createElement('div'); const messageBubble = document.createElement('div'); if (sender === 'user') { messageWrapper.className = 'message-user mb-4 flex justify-end'; messageBubble.className = 'bg-blue-600 text-white rounded-lg rounded-br-none p-3 max-w-lg'; } else if (sender === 'ai') { messageWrapper.className = 'message-ai mb-4 flex'; messageBubble.className = 'bg-slate-200 text-slate-800 rounded-lg rounded-bl-none p-3 max-w-lg'; } else { const existing = document.getElementById('system-message'); if (existing) existing.remove(); messageWrapper.id = 'system-message'; messageWrapper.className = 'message-system mb-4 flex justify-center'; messageBubble.className = sender === 'system-error' ? 'bg-red-100 text-red-700 rounded-lg p-2 text-xs' : 'bg-yellow-100 text-yellow-700 rounded-lg p-2 text-xs'; } messageBubble.innerHTML = `<p class="text-sm">${message.replace(/\n/g, '<br>')}</p>`; messageWrapper.appendChild(messageBubble); chatWindow.appendChild(messageWrapper); chatWindow.scrollTop = chatWindow.scrollHeight; }
@@ -192,16 +193,12 @@
             const isIPhone = /iPhone/i.test(navigator.userAgent);
 
             if (isIPhone) {
-                // Esconde o microfone
                 if (micWrapper) micWrapper.style.display = 'none';
-                // Mostra o botão de enviar permanentemente
                 if (sendButton) sendButton.classList.remove('hidden');
                 
-                // Altera o placeholder
                 const dict = translations[currentLang] || translations['en'];
                 userInput.placeholder = dict.input_placeholder_no_mic;
             } else {
-                // Lógica original para Android e Desktop
                  if (micWrapper) {
                     userInput.addEventListener('input', () => {
                         if (userInput.value.trim() !== '') {

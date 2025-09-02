@@ -89,7 +89,7 @@
         const translations = {
             "pt": { "title": "IA Cristã - Um Diálogo de Fé", "header_alt": "Imagem de Jesus Cristo", "header_title": "IA Cristã", "header_subtitle": "O seu companheiro para reflexão e estudo da Palavra.", "welcome_message": "Paz do Senhor! Eu sou o seu assistente virtual cristão. Estou aqui para te ajudar a aprofundar-se na Palavra de Deus. Sinta-se à vontade para perguntar sobre versículos, personagens bíblicos, ou para conversarmos sobre os desafios da vida sob a ótica cristã.", "input_placeholder": "Fale ou escreva...", "input_placeholder_no_mic": "Escreva...", "listening": "🎙️ Ouvindo...", "typing_indicator": "A meditar na Palavra", "error_message": "Perdão, minha ovelha, ocorreu um erro. Por favor, tente novamente.", "mic_denied": "Permissão para o microfone negada. Ative nas definições do seu navegador.", "mic_error": "Ocorreu um erro no reconhecimento de voz." },
             "en": { "title": "Christian AI - A Dialogue of Faith", "header_alt": "Image of Jesus Christ", "header_title": "Christian AI", "header_subtitle": "Your companion for reflection and study of the Word.", "welcome_message": "Peace of the Lord! I am your Christian virtual assistant. I am here to help you delve deeper into the Word of God. Feel free to ask about verses, biblical characters, or to talk about life's challenges from a Christian perspective.", "input_placeholder": "Speak or write...", "input_placeholder_no_mic": "Write...", "listening": "🎙️ Listening...", "typing_indicator": "Meditating on the Word", "error_message": "Pardon me, my sheep, an error occurred. Please try again.", "mic_denied": "Microphone permission denied. Please enable it in your browser settings.", "mic_error": "An error occurred with voice recognition." },
-            "es": { "title": "IA Cristiana - Un Diálogo de Fe", "header_alt": "Imagen de Jesucristo", "header_title": "IA Cristiana", "header_subtitle": "Tu compañero para la reflexión y el estudio de la Palabra.", "welcome_message": "¡Paz del Señor! Soy tu asistente virtual cristiano. Estoy aquí para ayudarte a profundizar en la Palabra de Dios. No dudes en preguntar sobre versículos, personajes bíblicos, o para conversar sobre los desafíos de la vida desde la óptica cristiana.", "input_placeholder": "Habla o escribe...", "input_placeholder_no_mic": "Escribe...", "listening": "🎙️ Escuchando...", "typing_indicator": "Meditando en la Palabra", "error_message": "Perdón, mi oveja, ocurrió un error. Por favor, inténtalo de nuevo.", "mic_denied": "Se denegó el permiso para el micrófono. Por favor, actívalo en la configuración de tu navegador.", "mic_error": "Ocurrió un error con el reconocimiento de voz." }
+            "es": { "title": "IA Cristiana - Un Diálogo de Fe", "header_alt": "Imagen de Jesucristo", "header_title": "IA Cristiana", "header_subtitle": "Tu compañero para la reflexión y el estudio de la Palabra.", "welcome_message": "¡Paz del Señor! Soy tu asistente virtual cristiano. Estoy aquí para ayudarte a profundizar en la Palabra de Dios. No dudes en preguntar sobre versículos, personajes bíblicos, o para conversar sobre los desafios de la vida desde la óptica cristiana.", "input_placeholder": "Habla o escribe...", "input_placeholder_no_mic": "Escribe...", "listening": "🎙️ Escuchando...", "typing_indicator": "Meditando en la Palabra", "error_message": "Perdón, mi oveja, ocurrió un error. Por favor, inténtalo de nuevo.", "mic_denied": "Se denegó el permiso para el micrófono. Por favor, actívalo en la configuración de tu navegador.", "mic_error": "Ocurrió un error con el reconocimiento de voz." }
         };
 
         let currentLang = 'pt';
@@ -191,8 +191,7 @@
         window.addEventListener('load', () => {
             const userLang = navigator.language || navigator.userLanguage;
             setLanguage(userLang.startsWith('pt') ? 'pt' : 'en');
-            userInput.focus();
-
+            
             const isIPhone = /iPhone/i.test(navigator.userAgent);
             const mainContainer = document.getElementById('main-container');
             const body = document.body;
@@ -205,11 +204,10 @@
                 const dict = translations[currentLang] || translations['en'];
                 userInput.placeholder = dict.input_placeholder_no_mic;
 
-                // Remove classes de centralização e aplica margem superior
                 body.classList.remove('items-center');
-                mainContainer.style.transform = ''; // Remove transform
+                mainContainer.style.transform = '';
                 mainContainer.classList.remove('m-4');
-                mainContainer.classList.add('my-12'); // Adiciona margem para "descer" o container
+                mainContainer.classList.add('my-20'); // *** ALTERAÇÃO APLICADA AQUI ***
 
             } else {
                 // Lógica para Android e Desktop
@@ -226,6 +224,7 @@
                     }
                 });
             }
+            userInput.focus();
         });
     </script>
 </body>

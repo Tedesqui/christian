@@ -20,15 +20,30 @@
 <body class="bg-blue-100 flex items-center justify-center min-h-screen text-slate-800">
     
     <script>
+        // Bloco de verificação de acesso e anti-fraude.
         (() => {
-            const token = localStorage.getItem('iaCristaAccessToken');
-            if (token) {
+            const tokenString = localStorage.getItem('iaCristaAccessToken');
+            if (tokenString) {
                 try {
-                    const { expiry } = JSON.parse(token);
-                    if (Date.now() < expiry) {
-                        window.location.href = '/chat.html';
+                    const { expiry, lastCheck } = JSON.parse(tokenString);
+                    const now = Date.now();
+
+                    // 1. Verifica se o token tem o formato novo (com 'lastCheck').
+                    // 2. DETECÇÃO DE FRAUDE: Verifica se o relógio do usuário foi movido para trás.
+                    //    Se a hora atual for anterior à última verificação, é fraude.
+                    if (!lastCheck || now < lastCheck) {
+                        localStorage.removeItem('iaCristaAccessToken'); // Remove o token fraudulento.
+                        return; // Permanece na página de pagamento.
+                    }
+
+                    // 3. Verificação de expiração normal.
+                    if (now < expiry) {
+                        window.location.href = '/chat.html'; // Redireciona se o acesso for válido.
+                    } else {
+                        localStorage.removeItem('iaCristaAccessToken'); // Remove se expirado.
                     }
                 } catch (e) {
+                    // Se o token estiver malformado, remove.
                     localStorage.removeItem('iaCristaAccessToken');
                 }
             }
@@ -51,8 +66,8 @@
         <div id="pix-email-content" class="hidden w-full">
              <p class="text-lg text-slate-600 mb-4" data-key="pix_email_info">Para gerar o PIX, por favor, informe seu e-mail.</p>
              <form id="pix-form">
-                <input type="email" id="pix-email" placeholder="seuemail@exemplo.com" data-key-placeholder="pix_email_placeholder" required class="w-full text-center p-3 border border-slate-300 rounded-md bg-slate-50 text-slate-800 mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <button type="submit" id="generate-pix-btn" class="w-full bg-[#009ee3] hover:bg-[#008ac9] text-white font-bold text-lg py-4 px-8 rounded-full transition-transform transform hover:scale-105 duration-300" data-key="pix_generate_button">Gerar QR Code PIX</button>
+                 <input type="email" id="pix-email" placeholder="seuemail@exemplo.com" data-key-placeholder="pix_email_placeholder" required class="w-full text-center p-3 border border-slate-300 rounded-md bg-slate-50 text-slate-800 mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                 <button type="submit" id="generate-pix-btn" class="w-full bg-[#009ee3] hover:bg-[#008ac9] text-white font-bold text-lg py-4 px-8 rounded-full transition-transform transform hover:scale-105 duration-300" data-key="pix_generate_button">Gerar QR Code PIX</button>
              </form>
         </div>
 
@@ -98,7 +113,7 @@
             "sv": { "payment_title": "Tillgång till Kristen AI", "payment_description": "För att chatta med Kristen AI krävs ett litet bidrag för underhåll av tjänsten.", "payment_button": "Prenumerera nu", "price_display": "$2.99 USD", "payment_loading": "Omdirigerar..." },
             "pl": { "payment_title": "Dostęp do Chrześcijańskiej SI", "payment_description": "Aby rozmawiać z Chrześcijańską SI, wymagana jest niewielka opłata na utrzymanie usługi.", "payment_button": "Subskrybuj teraz", "price_display": "$2.99 USD", "payment_loading": "Przekierowywanie..." },
             "bn": { "payment_title": "খ্রিস্টান এআই-তে অ্যাক্সেস", "payment_description": "খ্রিস্টান এআই-এর সাথে চ্যাট করার জন্য, পরিষেবা রক্ষণাবেক্ষণের জন্য একটি ছোট অবদান প্রয়োজন।", "payment_button": "এখন সাবস্ক্রাইব করুন", "price_display": "$2.99 USD", "payment_loading": "পুনঃনির্দেশ করা হচ্ছে..." },
-            "ar": { "payment_title": "الوصول إلى الذكاء الاصطناعي المسيحي", "payment_description": "للدردشة مع الذكاء الاصطناعي المسيحي، مطلوب مساهمة صغيرة لصيانة الخدمة.", "payment_button": "اشترك الآن", "price_display": "$2.99 USD", "payment_loading": "إعادة توجيه..." }
+            "ar": { "payment_title": "الوصول إلى الذكاء الاصطناعي المسيحي", "payment_description": "للدردرشة مع الذكاء الاصطناعي المسيحي، مطلوب مساهمة صغيرة لصيانة الخدمة.", "payment_button": "اشترك الآن", "price_display": "$2.99 USD", "payment_loading": "إعادة توجيه..." }
         };
 
         let currentLang = 'pt';
@@ -109,18 +124,32 @@
             return sid;
         }
 
-        function grantAccessAndNotify() {
+        // Função ATUALIZADA para conceder acesso.
+        async function grantAccessAndNotify() {
             try {
+                // PASSO 1: Busca a hora atual do servidor para usar como base confiável.
+                const timeResponse = await fetch('/api/get-current-time');
+                const { now: serverNow } = await timeResponse.json();
+
+                if (!serverNow) {
+                    throw new Error("Não foi possível obter a hora do servidor.");
+                }
+
                 const sevenDays = 7 * 24 * 60 * 60 * 1000;
-                const newExpiry = Date.now() + sevenDays;
+                const newExpiry = serverNow + sevenDays;
                 
-                const token = JSON.stringify({ expiry: newExpiry });
+                // PASSO 2: O token agora armazena a data de expiração E a hora da última verificação.
+                const token = JSON.stringify({ 
+                    expiry: newExpiry,       // Timestamp de quando o acesso expira.
+                    lastCheck: serverNow     // Timestamp da criação/última verificação.
+                });
+
                 localStorage.setItem('iaCristaAccessToken', token);
                 
                 window.location.href = '/chat.html';
             } catch (error) {
-                console.error("Erro ao salvar o acesso:", error);
-                alert("Ocorreu um erro ao salvar seu acesso. Verifique as configurações de privacidade do seu navegador e tente novamente.");
+                console.error("Erro ao conceder acesso:", error);
+                alert("Ocorreu um erro ao salvar seu acesso. Verifique sua conexão e tente novamente.");
             }
         }
 
@@ -134,7 +163,7 @@
                         if (data.paid) {
                             clearInterval(paymentCheckInterval);
                             pixStatusText.textContent = (translations[currentLang] || translations['pt']).pix_payment_approved;
-                            setTimeout(grantAccessAndNotify, 1500);
+                            setTimeout(grantAccessAndNotify, 1500); // Chama a nova função segura.
                         }
                     }
                 } catch (error) { console.error("Erro ao verificar status:", error); }
@@ -193,8 +222,8 @@
                 const key = el.getAttribute('data-key-placeholder');
                  const dict = translations[currentLang] || translations['en'];
                  if (dict[key]) {
-                    el.placeholder = dict[key];
-                }
+                     el.placeholder = dict[key];
+                 }
             });
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -205,3 +234,4 @@
     </script>
 </body>
 </html>
+

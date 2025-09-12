@@ -26,19 +26,41 @@
 <body class="bg-slate-100 md:flex md:items-center md:justify-center">
     
     <script>
+        // Bloco de verificação de acesso e anti-fraude.
         (() => {
-            const token = localStorage.getItem('iaCristaAccessToken');
-            if (!token) {
-                window.location.href = '/index.html';
+            const tokenString = localStorage.getItem('iaCristaAccessToken');
+            if (!tokenString) {
+                window.location.href = '/index.html'; // Se não há token, redireciona.
                 return;
             }
             try {
-                const { expiry } = JSON.parse(token);
-                if (Date.now() >= expiry) {
-                    localStorage.removeItem('iaCristaAccessToken');
+                const token = JSON.parse(tokenString);
+                const now = Date.now();
+
+                // 1. Valida o formato do token e detecta fraude (relógio movido para trás).
+                //    Se o token não tiver 'expiry' ou 'lastCheck', ou se a hora atual for
+                //    anterior à última verificação, o token é inválido/fraudulento.
+                if (!token.expiry || !token.lastCheck || now < token.lastCheck) {
+                    localStorage.removeItem('iaCristaAccessToken'); // Remove o token inválido.
                     window.location.href = '/index.html';
+                    return;
                 }
+                
+                // 2. Verifica se o acesso expirou normalmente.
+                if (now >= token.expiry) {
+                    localStorage.removeItem('iaCristaAccessToken'); // Remove o token expirado.
+                    window.location.href = '/index.html';
+                    return;
+                }
+
+                // 3. Se o acesso for válido, atualiza o 'lastCheck' para a hora atual.
+                //    Isso aumenta a segurança, registrando a última hora válida conhecida,
+                //    o que torna a fraude de tempo progressivamente mais difícil.
+                token.lastCheck = now;
+                localStorage.setItem('iaCristaAccessToken', JSON.stringify(token));
+
             } catch (e) {
+                // Se o token estiver malformado, remove e redireciona.
                 localStorage.removeItem('iaCristaAccessToken');
                 window.location.href = '/index.html';
             }
@@ -213,16 +235,16 @@
                 userInput.placeholder = dict.input_placeholder_no_mic;
             } else {
                  if (micWrapper) {
-                    userInput.addEventListener('input', () => {
-                        if (userInput.value.trim() !== '') {
-                            sendButton.classList.remove('hidden');
-                            micWrapper.classList.add('hidden');
-                        } else {
-                            sendButton.classList.add('hidden');
-                            micWrapper.classList.remove('hidden');
-                        }
-                    });
-                }
+                     userInput.addEventListener('input', () => {
+                         if (userInput.value.trim() !== '') {
+                             sendButton.classList.remove('hidden');
+                             micWrapper.classList.add('hidden');
+                         } else {
+                             sendButton.classList.add('hidden');
+                             micWrapper.classList.remove('hidden');
+                         }
+                     });
+                 }
             }
             userInput.focus();
         });

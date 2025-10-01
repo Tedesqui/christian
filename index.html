@@ -56,7 +56,7 @@
             <p class="text-lg text-slate-600 mb-8" data-key="payment_description">Para conversar com a IA Cristã, é necessária uma pequena contribuição para a manutenção do serviço.</p>
             <div class="bg-blue-50 p-6 rounded-lg mb-8">
                 <p class="text-xl">Acesso Semanal</p>
-                <p id="price-display" class="text-5xl font-bold my-2 text-blue-700">R$ 14,90</p>
+                <p id="price-display" class="text-5xl font-bold my-2 text-blue-700">R$ 19,90</p>
             </div>
             <button id="subscribe-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 px-8 rounded-full transition-transform transform hover:scale-105 duration-300" data-key="payment_button">
                 Assinar Agora
@@ -66,8 +66,8 @@
         <div id="pix-email-content" class="hidden w-full">
              <p class="text-lg text-slate-600 mb-4" data-key="pix_email_info">Para gerar o PIX, por favor, informe seu e-mail.</p>
              <form id="pix-form">
-                 <input type="email" id="pix-email" placeholder="seuemail@exemplo.com" data-key-placeholder="pix_email_placeholder" required class="w-full text-center p-3 border border-slate-300 rounded-md bg-slate-50 text-slate-800 mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                 <button type="submit" id="generate-pix-btn" class="w-full bg-[#009ee3] hover:bg-[#008ac9] text-white font-bold text-lg py-4 px-8 rounded-full transition-transform transform hover:scale-105 duration-300" data-key="pix_generate_button">Gerar QR Code PIX</button>
+                   <input type="email" id="pix-email" placeholder="seuemail@exemplo.com" data-key-placeholder="pix_email_placeholder" required class="w-full text-center p-3 border border-slate-300 rounded-md bg-slate-50 text-slate-800 mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                   <button type="submit" id="generate-pix-btn" class="w-full bg-[#009ee3] hover:bg-[#008ac9] text-white font-bold text-lg py-4 px-8 rounded-full transition-transform transform hover:scale-105 duration-300" data-key="pix_generate_button">Gerar QR Code PIX</button>
              </form>
         </div>
 
@@ -98,22 +98,22 @@
         let paymentCheckInterval = null;
 
         const translations = {
-            "pt": { "payment_title": "Acesso à IA Cristã", "payment_description": "Para conversar com a IA Cristã, é necessária uma pequena contribuição para a manutenção do serviço.", "payment_button": "Assinar Agora", "price_display": "R$ 14,90", "payment_loading": "Redirecionando...", "pix_email_info": "Para gerar o PIX, por favor, informe seu e-mail.", "pix_email_placeholder": "seuemail@exemplo.com", "pix_generate_button": "Gerar QR Code PIX", "pix_generating": "Aguarde...", "pix_scan_or_copy": "Escaneie o QR Code ou use o Copia e Cola:", "pix_copy_button": "Copiar", "pix_copied_button": "Copiado!", "pix_waiting_payment": "Aguardando pagamento...", "pix_payment_approved": "Pagamento Aprovado! Redirecionando...", "pix_invalid_email": "Por favor, insira um e-mail válido.", "pix_error_generating": "Erro ao gerar o PIX. Tente novamente." },
-            "en": { "payment_title": "Access Christian AI", "payment_description": "To chat with Christian AI, a small contribution is required for service maintenance.", "payment_button": "Subscribe Now", "price_display": "$2.99 USD", "payment_loading": "Redirecting..." },
-            "es": { "payment_title": "Acceso a IA Cristiana", "payment_description": "Para chatear con IA Cristiana, se requiere una pequeña contribución para el mantenimiento del servicio.", "payment_button": "Suscribir Ahora", "price_display": "$2.99 USD", "payment_loading": "Redirigiendo..." },
-            "it": { "payment_title": "Accesso a IA Cristiana", "payment_description": "Per chattare con l'IA Cristiana, è richiesto un piccolo contributo per la manutenzione del servizio.", "payment_button": "Abbonati Ora", "price_display": "€2.99 EUR", "payment_loading": "Reindirizzamento..." },
-            "fr": { "payment_title": "Accès à l'IA Chrétienne", "payment_description": "Pour discuter avec l'IA Chrétienne, une petite contribution est requise pour la maintenance du service.", "payment_button": "S'abonner Maintenant", "price_display": "€2.99 EUR", "payment_loading": "Redirection..." },
-            "de": { "payment_title": "Zugang zur Christlichen KI", "payment_description": "Um mit der Christlichen KI zu chatten, ist ein kleiner Beitrag zur Wartung des Dienstes erforderlich.", "payment_button": "Jetzt abonnieren", "price_display": "€2.99 EUR", "payment_loading": "Weiterleitung..." },
-            "ru": { "payment_title": "Доступ к Христианскому ИИ", "payment_description": "Чтобы общаться с Христианским ИИ, требуется небольшой взнос на обслуживание сервиса.", "payment_button": "Подписаться сейчас", "price_display": "$2.99 USD", "payment_loading": "Перенаправление..." },
-            "ja": { "payment_title": "キリスト教AIへのアクセス", "payment_description": "キリスト教AIとチャットするには、サービスの維持のために少額の寄付が必要です。", "payment_button": "今すぐ登録", "price_display": "$2.99 USD", "payment_loading": "リダイレクト中..." },
-            "ko": { "payment_title": "기독교 AI 액세스", "payment_description": "기독교 AI와 채팅하려면 서비스 유지를 위해 약간의 기여가 필요합니다.", "payment_button": "지금 구독", "price_display": "$2.99 USD", "payment_loading": "리디렉션 중..." },
-            "zh": { "payment_title": "访问基督教AI", "payment_description": "与基督教AI聊天需要为服务维护提供少量捐款。", "payment_button": "立即订阅", "price_display": "$2.99 USD", "payment_loading": "正在重定向..." },
-            "hi": { "payment_title": "ईसाई एआई तक पहुंच", "payment_description": "ईसाई एआई के साथ चैट करने के लिए, सेवा रखरखाव के लिए एक छोटे से योगदान की आवश्यकता है।", "payment_button": "अभी सदस्यता लें", "price_display": "$2.99 USD", "payment_loading": "पुनर्निर्देशित कर रहा है..." },
-            "fil": { "payment_title": "Access sa Christian AI", "payment_description": "Upang makipag-chat sa Christian AI, kailangan ng maliit na kontribusyon para sa pagpapanatili ng serbisyo.", "payment_button": "Mag-subscribe Ngayon", "price_display": "$2.99 USD", "payment_loading": "Nagre-redirect..." },
-            "sv": { "payment_title": "Tillgång till Kristen AI", "payment_description": "För att chatta med Kristen AI krävs ett litet bidrag för underhåll av tjänsten.", "payment_button": "Prenumerera nu", "price_display": "$2.99 USD", "payment_loading": "Omdirigerar..." },
-            "pl": { "payment_title": "Dostęp do Chrześcijańskiej SI", "payment_description": "Aby rozmawiać z Chrześcijańską SI, wymagana jest niewielka opłata na utrzymanie usługi.", "payment_button": "Subskrybuj teraz", "price_display": "$2.99 USD", "payment_loading": "Przekierowywanie..." },
-            "bn": { "payment_title": "খ্রিস্টান এআই-তে অ্যাক্সেস", "payment_description": "খ্রিস্টান এআই-এর সাথে চ্যাট করার জন্য, পরিষেবা রক্ষণাবেক্ষণের জন্য একটি ছোট অবদান প্রয়োজন।", "payment_button": "এখন সাবস্ক্রাইব করুন", "price_display": "$2.99 USD", "payment_loading": "পুনঃনির্দেশ করা হচ্ছে..." },
-            "ar": { "payment_title": "الوصول إلى الذكاء الاصطناعي المسيحي", "payment_description": "للدردرشة مع الذكاء الاصطناعي المسيحي، مطلوب مساهمة صغيرة لصيانة الخدمة.", "payment_button": "اشترك الآن", "price_display": "$2.99 USD", "payment_loading": "إعادة توجيه..." }
+            "pt": { "payment_title": "Acesso à IA Cristã", "payment_description": "Para conversar com a IA Cristã, é necessária uma pequena contribuição para a manutenção do serviço.", "payment_button": "Assinar Agora", "price_display": "R$ 19,90", "payment_loading": "Redirecionando...", "pix_email_info": "Para gerar o PIX, por favor, informe seu e-mail.", "pix_email_placeholder": "seuemail@exemplo.com", "pix_generate_button": "Gerar QR Code PIX", "pix_generating": "Aguarde...", "pix_scan_or_copy": "Escaneie o QR Code ou use o Copia e Cola:", "pix_copy_button": "Copiar", "pix_copied_button": "Copiado!", "pix_waiting_payment": "Aguardando pagamento...", "pix_payment_approved": "Pagamento Aprovado! Redirecionando...", "pix_invalid_email": "Por favor, insira um e-mail válido.", "pix_error_generating": "Erro ao gerar o PIX. Tente novamente." },
+            "en": { "payment_title": "Access Christian AI", "payment_description": "To chat with Christian AI, a small contribution is required for service maintenance.", "payment_button": "Subscribe Now", "price_display": "$3.99 USD", "payment_loading": "Redirecting..." },
+            "es": { "payment_title": "Acceso a IA Cristiana", "payment_description": "Para chatear con IA Cristiana, se requiere una pequeña contribución para el mantenimiento del servicio.", "payment_button": "Suscribir Ahora", "price_display": "$3.99 USD", "payment_loading": "Redirigiendo..." },
+            "it": { "payment_title": "Accesso a IA Cristiana", "payment_description": "Per chattare con l'IA Cristiana, è richiesto un piccolo contributo per la manutenzione del servizio.", "payment_button": "Abbonati Ora", "price_display": "€3.49 EUR", "payment_loading": "Reindirizzamento..." },
+            "fr": { "payment_title": "Accès à l'IA Chrétienne", "payment_description": "Pour discuter avec l'IA Chrétienne, une petite contribution est requise pour la maintenance du service.", "payment_button": "S'abonner Maintenant", "price_display": "€3.49 EUR", "payment_loading": "Redirection..." },
+            "de": { "payment_title": "Zugang zur Christlichen KI", "payment_description": "Um mit der Christlichen KI zu chatten, ist ein kleiner Beitrag zur Wartung des Dienstes erforderlich.", "payment_button": "Jetzt abonnieren", "price_display": "€3.49 EUR", "payment_loading": "Weiterleitung..." },
+            "ru": { "payment_title": "Доступ к Христианскому ИИ", "payment_description": "Чтобы общаться с Христианским ИИ, требуется небольшой взнос на обслуживание сервиса.", "payment_button": "Подписаться сейчас", "price_display": "$3.99 USD", "payment_loading": "Перенаправление..." },
+            "ja": { "payment_title": "キリスト教AIへのアクセス", "payment_description": "キリスト教AIとチャットするには、サービスの維持のために少額の寄付が必要です。", "payment_button": "今すぐ登録", "price_display": "$3.99 USD", "payment_loading": "リダイレクト中..." },
+            "ko": { "payment_title": "기독교 AI 액세스", "payment_description": "기독교 AI와 채팅하려면 서비스 유지를 위해 약간의 기여가 필요합니다.", "payment_button": "지금 구독", "price_display": "$3.99 USD", "payment_loading": "리디렉션 중..." },
+            "zh": { "payment_title": "访问基督教AI", "payment_description": "与基督教AI聊天需要为服务维护提供少量捐款。", "payment_button": "立即订阅", "price_display": "$3.99 USD", "payment_loading": "正在重定向..." },
+            "hi": { "payment_title": "ईसाई एआई तक पहुंच", "payment_description": "ईसाई एआई के साथ चैट करने के लिए, सेवा रखरखाव के लिए एक छोटे से योगदान की आवश्यकता है।", "payment_button": "अभी सदस्यता लें", "price_display": "$3.99 USD", "payment_loading": "पुनर्निर्देशित कर रहा है..." },
+            "fil": { "payment_title": "Access sa Christian AI", "payment_description": "Upang makipag-chat sa Christian AI, kailangan ng maliit na kontribusyon para sa pagpapanatili ng serbisyo.", "payment_button": "Mag-subscribe Ngayon", "price_display": "$3.99 USD", "payment_loading": "Nagre-redirect..." },
+            "sv": { "payment_title": "Tillgång till Kristen AI", "payment_description": "För att chatta med Kristen AI krävs ett litet bidrag för underhåll av tjänsten.", "payment_button": "Prenumerera nu", "price_display": "$3.99 USD", "payment_loading": "Omdirigerar..." },
+            "pl": { "payment_title": "Dostęp do Chrześcijańskiej SI", "payment_description": "Aby rozmawiać z Chrześcijańską SI, wymagana jest niewielka opłata na utrzymanie usługi.", "payment_button": "Subskrybuj teraz", "price_display": "$3.99 USD", "payment_loading": "Przekierowywanie..." },
+            "bn": { "payment_title": "খ্রিস্টান এআই-তে অ্যাক্সেস", "payment_description": "খ্রিস্টান এআই-এর সাথে চ্যাট করার জন্য, পরিষেবা রক্ষণাবেক্ষণের জন্য একটি ছোট অবদান প্রয়োজন।", "payment_button": "এখন সাবস্ক্রাইব করুন", "price_display": "$3.99 USD", "payment_loading": "পুনঃনির্দেশ করা হচ্ছে..." },
+            "ar": { "payment_title": "الوصول إلى الذكاء الاصطناعي المسيحي", "payment_description": "للدردرشة مع الذكاء الاصطناعي المسيحي، مطلوب مساهمة صغيرة لصيانة الخدمة.", "payment_button": "اشترك الآن", "price_display": "$3.99 USD", "payment_loading": "إعادة توجيه..." }
         };
 
         let currentLang = 'pt';
@@ -140,8 +140,8 @@
                 
                 // PASSO 2: O token agora armazena a data de expiração E a hora da última verificação.
                 const token = JSON.stringify({ 
-                    expiry: newExpiry,       // Timestamp de quando o acesso expira.
-                    lastCheck: serverNow     // Timestamp da criação/última verificação.
+                    expiry: newExpiry,      // Timestamp de quando o acesso expira.
+                    lastCheck: serverNow    // Timestamp da criação/última verificação.
                 });
 
                 localStorage.setItem('iaCristaAccessToken', token);
@@ -219,12 +219,12 @@
             });
             document.getElementById('price-display').textContent = (translations[currentLang] || translations['en']).price_display;
              document.querySelectorAll('[data-key-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-key-placeholder');
+                 const key = el.getAttribute('data-key-placeholder');
                  const dict = translations[currentLang] || translations['en'];
                  if (dict[key]) {
                      el.placeholder = dict[key];
                  }
-            });
+             });
 
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('session_id')) {
@@ -234,4 +234,3 @@
     </script>
 </body>
 </html>
-

@@ -22,7 +22,7 @@ export default async function handler(request, response) {
 
         const paymentData = {
             body: {
-                transaction_amount: 1.00, // Preço correto para a IA Cristã
+                transaction_amount: 19.90, // Preço correto para a IA Cristã
                 description: 'Acesso Semanal - IA Cristã',
                 payment_method_id: 'pix',
                 external_reference: sessionId, // Vincula o pagamento à sessão do usuário

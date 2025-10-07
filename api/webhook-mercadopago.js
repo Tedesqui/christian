@@ -1,4 +1,5 @@
 import { MercadoPagoConfig, Payment } from 'mercadopago';
+import { kv } from '@vercel/kv';
 
 export default async function handler(request, response) {
     if (request.method !== 'POST') {
@@ -7,9 +8,7 @@ export default async function handler(request, response) {
 
     const { query } = request;
     const topic = query.topic || query.type;
-    
-    // Mostra no log do servidor que o Mercado Pago chamou o webhook
-    console.log('Webhook do Mercado Pago recebido!', { topic, id: query.id });
+    console.log('Webhook KV recebido!', { topic, id: query.id });
 
     if (topic === 'payment') {
         try {
@@ -17,31 +16,23 @@ export default async function handler(request, response) {
             const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
             const client = new MercadoPagoConfig({ accessToken });
             const payment = new Payment(client);
-
             const paymentDetails = await payment.get({ id: paymentId });
 
-            console.log('Detalhes do Pagamento:', paymentDetails);
-
-            // ✅ LÓGICA PRINCIPAL: Verifique se o pagamento foi aprovado
             if (paymentDetails.status === 'approved') {
                 const sessionId = paymentDetails.external_reference;
                 
-                //
-                // AQUI VEM A SUA LÓGICA DE NEGÓCIO
-                // Exemplo: Salvar no banco de dados que a sessionId foi paga
-                //
-                // Ex: await marcarPedidoComoPago(sessionId);
-                //
-                console.log(`Pagamento APROVADO para a sessão: ${sessionId}`);
+                // ✅ LÓGICA DEFINITIVA: Salva a sessão no Vercel KV
+                // O '1' pode ser qualquer valor. Usamos a chave para verificar a existência.
+                // 'ex: 600' define que a chave expira em 10 minutos para não sujar o banco.
+                await kv.set(sessionId, 1, { ex: 600 });
+                
+                console.log(`Pagamento APROVADO e registrado no KV para a sessão: ${sessionId}`);
             }
-
         } catch (error) {
-            console.error('Erro ao processar webhook do Mercado Pago:', error);
-            // Retorna 500 para que o Mercado Pago tente novamente mais tarde
+            console.error('Erro ao processar webhook KV:', error);
             return response.status(500).send('Erro interno');
         }
     }
     
-    // Retorna 200 para confirmar ao Mercado Pago que a notificação foi recebida
     response.status(200).send('Webhook recebido');
 }

@@ -20,6 +20,43 @@
         .hidden { display: none; }
         .mic-wrapper { position: relative; display: inline-flex; align-items: center; justify-content: center; z-index: 50; }
         .recording button { transform: scale(1.5); background-color: #22c55e !important; transition: transform 0.2s ease, background-color 0.2s ease; }
+        
+        /* --- NOVO: Estilos para o Modal (exatamente como no exemplo) --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+        }
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -37,30 +74,22 @@
                 const token = JSON.parse(tokenString);
                 const now = Date.now();
 
-                // 1. Valida o formato do token e detecta fraude (relógio movido para trás).
-                //    Se o token não tiver 'expiry' ou 'lastCheck', ou se a hora atual for
-                //    anterior à última verificação, o token é inválido/fraudulento.
                 if (!token.expiry || !token.lastCheck || now < token.lastCheck) {
                     localStorage.removeItem('iaCristaAccessToken'); // Remove o token inválido.
                     window.location.href = '/index.html';
                     return;
                 }
                 
-                // 2. Verifica se o acesso expirou normalmente.
                 if (now >= token.expiry) {
                     localStorage.removeItem('iaCristaAccessToken'); // Remove o token expirado.
                     window.location.href = '/index.html';
                     return;
                 }
 
-                // 3. Se o acesso for válido, atualiza o 'lastCheck' para a hora atual.
-                //    Isso aumenta a segurança, registrando a última hora válida conhecida,
-                //    o que torna a fraude de tempo progressivamente mais difícil.
                 token.lastCheck = now;
                 localStorage.setItem('iaCristaAccessToken', JSON.stringify(token));
 
             } catch (e) {
-                // Se o token estiver malformado, remove e redireciona.
                 localStorage.removeItem('iaCristaAccessToken');
                 window.location.href = '/index.html';
             }
@@ -69,7 +98,7 @@
 
     <div id="main-container" class="flex flex-col w-screen h-dvh bg-white md:w-full md:max-w-3xl md:h-[85vh] md:max-h-[900px] md:rounded-2xl md:shadow-2xl">
         <header class="bg-blue-600 text-white p-6 rounded-t-2xl shadow-md flex items-center space-x-4">
-            <img src="images/jesus.jpg" alt="Imagem de Jesus Cristo" data-key="header_alt" class="h-20 w-20 rounded-full object-cover border-2 border-white" />
+            <img id="profile-pic-header" src="images/jesus.jpg" alt="Imagem de Jesus Cristo" data-key="header_alt" class="h-20 w-20 rounded-full object-cover border-2 border-white cursor-pointer hover:opacity-80 transition-opacity" />
             <div>
                 <h1 class="text-2xl font-bold" data-key="header_title">IA Cristã</h1>
                 <p class="text-sm text-white" data-key="header_subtitle">O seu companheiro para reflexão e estudo da Palavra.</p>
@@ -99,6 +128,11 @@
                 </div>
             </div>
         </footer>
+    </div>
+    
+    <div id="image-modal" class="modal">
+        <span id="close-modal-btn" class="close-button">&times;</span>
+        <img class="modal-content" id="modal-image-src" alt="Imagem da IA Cristã em tela cheia">
     </div>
     
     <script>
@@ -213,7 +247,6 @@
                     }
                 }
             });
-
         }
 
         function appendMessage(message, sender) { const messageWrapper = document.createElement('div'); const messageBubble = document.createElement('div'); if (sender === 'user') { messageWrapper.className = 'message-user mb-4 flex justify-end'; messageBubble.className = 'bg-blue-600 text-white rounded-lg rounded-br-none p-3 max-w-lg'; } else if (sender === 'ai') { messageWrapper.className = 'message-ai mb-4 flex'; messageBubble.className = 'bg-slate-200 text-slate-800 rounded-lg rounded-bl-none p-3 max-w-lg'; } else { const existing = document.getElementById('system-message'); if (existing) existing.remove(); messageWrapper.id = 'system-message'; messageWrapper.className = 'message-system mb-4 flex justify-center'; messageBubble.className = sender === 'system-error' ? 'bg-red-100 text-red-700 rounded-lg p-2 text-xs' : 'bg-yellow-100 text-yellow-700 rounded-lg p-2 text-xs'; } messageBubble.innerHTML = `<p class="text-sm">${message.replace(/\n/g, '<br>')}</p>`; messageWrapper.appendChild(messageBubble); chatWindow.appendChild(messageWrapper); chatWindow.scrollTop = chatWindow.scrollHeight; }
@@ -234,19 +267,50 @@
                 const dict = translations[currentLang] || translations['en'];
                 userInput.placeholder = dict.input_placeholder_no_mic;
             } else {
-                 if (micWrapper) {
-                     userInput.addEventListener('input', () => {
-                         if (userInput.value.trim() !== '') {
-                             sendButton.classList.remove('hidden');
-                             micWrapper.classList.add('hidden');
-                         } else {
-                             sendButton.classList.add('hidden');
-                             micWrapper.classList.remove('hidden');
-                         }
-                     });
-                 }
+                if (micWrapper) {
+                    userInput.addEventListener('input', () => {
+                        if (userInput.value.trim() !== '') {
+                            sendButton.classList.remove('hidden');
+                            micWrapper.classList.add('hidden');
+                        } else {
+                            sendButton.classList.add('hidden');
+                            micWrapper.classList.remove('hidden');
+                        }
+                    });
+                }
             }
             userInput.focus();
+
+            // --- NOVO: LÓGICA DO MODAL (exatamente como no exemplo) ---
+            const imageModal = document.getElementById('image-modal');
+            const profilePic = document.getElementById('profile-pic-header');
+            const modalImageSrc = document.getElementById('modal-image-src');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+
+            // Função para abrir o modal
+            profilePic.onclick = function() {
+                imageModal.style.display = "flex";
+                modalImageSrc.src = this.src; // Pega o 'src' da imagem clicada
+            }
+
+            // Função para fechar clicando no 'X'
+            closeModalBtn.onclick = function() {
+                imageModal.style.display = "none";
+            }
+
+            // Função para fechar clicando fora da imagem
+            window.onclick = function(event) {
+                if (event.target == imageModal) {
+                    imageModal.style.display = "none";
+                }
+            }
+            
+            // Opcional: Fechar com a tecla "Escape"
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && imageModal.style.display === "flex") {
+                    imageModal.style.display = "none";
+                }
+            });
         });
     </script>
 </body>

@@ -1,5 +1,5 @@
 import { MercadoPagoConfig, Payment } from 'mercadopago';
-import { setPaid } from '../../lib/payment-store'; // Importa nosso cache
+import { setPaid } from '../lib/payment-store'; // <-- CORREÇÃO APLICADA AQUI
 
 export default async function handler(request, response) {
     // O webhook só aceita requisições POST

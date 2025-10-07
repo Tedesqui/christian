@@ -24,7 +24,7 @@ export default async function handler(request, response) {
         const idempotencyKey = crypto.randomUUID();
         const paymentData = {
             body: {
-                transaction_amount: 19.90, // PREÇO CORRETO: R$ 19,90
+                transaction_amount: 1.00, // PREÇO CORRETO: R$ 19,90
                 description: 'Acesso Semanal - IA Cristã',
                 payment_method_id: 'pix',
                 external_reference: sessionId,

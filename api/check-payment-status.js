@@ -1,4 +1,4 @@
-import { isPaid } from '../../lib/payment-store'; // Importa nosso cache
+import { isPaid } from '../lib/payment-store'; // <-- CORREÇÃO APLICADA AQUI
 
 // Este endpoint agora verifica nosso cache interno, que é atualizado pelo webhook.
 export default async function handler(request, response) {

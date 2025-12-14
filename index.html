@@ -10,8 +10,8 @@
         body { font-family: 'Inter', sans-serif; overflow: hidden; user-select: none; }
         #chat-window {
             background-color: #f0f9ff;
-            /* CAMINHO CORRIGIDO PARA VERCEL: */
-            background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('/heaven.jpeg');
+            /* 👇 COLOQUE SEU LINK DO CÉU AQUI 👇 */
+            background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('https://raw.githubusercontent.com/Tedesqui/christian/refs/heads/main/heaven.jpeg');
             background-size: cover; background-position: center; 
             position: relative; z-index: 40;
         }
@@ -21,10 +21,12 @@
             transition: all 0.1s ease-in-out;
             transform-origin: center;
         }
+        
+        /* --- ESTILO QUANDO PRESSIONADO (CORRIGIDO) --- */
         .mic-active {
-            transform: scale(2.0) !important;
-            background-color: #ef4444 !important;
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+            transform: scale(1.5) !important; /* Agora cresce apenas 50% */
+            background-color: #1d4ed8 !important; /* Azul mais escuro (não fica mais vermelho) */
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.6); /* Brilho azulado */
         }
 
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
@@ -37,7 +39,7 @@
 
     <div id="main-container" class="flex flex-col w-screen h-dvh bg-white md:w-full md:max-w-3xl md:h-[85vh] md:max-h-[900px] md:rounded-2xl md:shadow-2xl">
         <header class="bg-blue-600 text-white p-6 rounded-t-2xl shadow-md flex items-center space-x-4">
-            <img id="profile-pic-header" src="/jesus.jpg" onerror="this.src='https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=200&q=80'" alt="Jesus Cristo" class="h-20 w-20 rounded-full object-cover border-2 border-white cursor-pointer hover:opacity-80 transition-opacity" />
+            <img id="profile-pic-header" src="https://raw.githubusercontent.com/Tedesqui/christian/refs/heads/main/jesus.jpg" onerror="this.src='https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=200&q=80'" alt="Jesus Cristo" class="h-20 w-20 rounded-full object-cover border-2 border-white cursor-pointer hover:opacity-80 transition-opacity" />
             <div>
                 <h1 class="text-2xl font-bold">IA Cristã</h1>
                 <p class="text-sm text-white">Segure o microfone para orar.</p>

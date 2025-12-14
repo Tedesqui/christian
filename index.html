@@ -2,22 +2,32 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title data-key="title">IA Cristã - Um Diálogo de Fé</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title data-key="title">IA Cristã</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
     <style>
-        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; user-select: none; }
         #chat-window {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05)), url('images/heaven.jpeg');
-            background-size: cover; background-position: center; position: relative; z-index: 40;
-            background-color: #f0f9ff; /* Cor de fundo caso a imagem falhe */
+            /* Fundo suave caso a imagem de fundo falhe */
+            background-color: #f0f9ff;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('public/heaven.jpeg'); /* Opcional: se tiver fundo */
+            background-size: cover; background-position: center; 
+            position: relative; z-index: 40;
         }
-        #user-input { caret-color: #2563eb; }
         .hidden { display: none; }
-        .mic-wrapper { position: relative; display: inline-flex; align-items: center; justify-content: center; z-index: 50; }
-        .recording button { transform: scale(1.5); background-color: #22c55e !important; transition: transform 0.2s ease, background-color 0.2s ease; }
         
+        /* --- ESTILO DO BOTÃO DO MICROFONE (EFEITO WHATSAPP) --- */
+        #mic-button {
+            transition: all 0.1s ease-in-out;
+            transform-origin: center;
+        }
+        .mic-active {
+            transform: scale(2.0) !important; /* Aumenta 100% */
+            background-color: #ef4444 !important; /* Vermelho gravando */
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+        }
+
         /* Modal Styles */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
         .modal-content { margin: auto; display: block; width: 80%; max-width: 500px; border-radius: 8px; }
@@ -29,17 +39,19 @@
 
     <div id="main-container" class="flex flex-col w-screen h-dvh bg-white md:w-full md:max-w-3xl md:h-[85vh] md:max-h-[900px] md:rounded-2xl md:shadow-2xl">
         <header class="bg-blue-600 text-white p-6 rounded-t-2xl shadow-md flex items-center space-x-4">
-            <img id="profile-pic-header" src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=200&q=80" alt="Luz Divina" class="h-20 w-20 rounded-full object-cover border-2 border-white cursor-pointer hover:opacity-80 transition-opacity" />
+            
+            <img id="profile-pic-header" src="/jesus.jpg" onerror="this.src='https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=200&q=80'" alt="Jesus Cristo" class="h-20 w-20 rounded-full object-cover border-2 border-white cursor-pointer hover:opacity-80 transition-opacity" />
+            
             <div>
-                <h1 class="text-2xl font-bold" data-key="header_title">IA Cristã</h1>
-                <p class="text-sm text-white" data-key="header_subtitle">O seu companheiro para reflexão e estudo da Palavra.</p>
+                <h1 class="text-2xl font-bold">IA Cristã</h1>
+                <p class="text-sm text-white">Segure o microfone para orar ou perguntar.</p>
             </div>
         </header>
 
         <main id="chat-window" class="flex-1 p-6 overflow-y-auto">
             <div class="message-ai mb-4 flex">
                 <div class="bg-slate-200 text-slate-800 rounded-lg rounded-bl-none p-3 max-w-lg">
-                    <p class="text-sm" data-key="welcome_message">Paz do Senhor! Eu sou o seu assistente virtual cristão. Estou aqui para te ajudar a aprofundar-se na Palavra de Deus.</p>
+                    <p class="text-sm">Paz do Senhor! Segure o botão do microfone para falar comigo, ou digite abaixo.</p>
                 </div>
             </div>
         </main>
@@ -47,12 +59,14 @@
         <footer class="p-2 bg-white rounded-b-2xl">
             <div class="w-full">
                 <div class="flex items-center bg-slate-100 rounded-full p-1.5">
-                    <input type="text" id="user-input" placeholder="Fale ou escreva..." class="flex-1 bg-transparent border-none focus:ring-0 text-slate-800 placeholder-slate-400 px-4" />
+                    <input type="text" id="user-input" placeholder="Digite aqui..." class="flex-1 bg-transparent border-none focus:ring-0 text-slate-800 placeholder-slate-400 px-4" />
+                    
                     <button id="send-button" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2.5 transition-colors duration-300 ml-2.5 hidden">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>
                     </button>
-                    <div class="mic-wrapper">
-                        <button id="mic-button" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2.5 transition-colors duration-300 ml-2.5">
+                    
+                    <div class="mic-wrapper" id="mic-wrapper">
+                        <button id="mic-button" class="bg-blue-600 text-white rounded-full p-2.5 ml-2.5 select-none touch-manipulation">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd" /></svg>
                         </button>
                     </div>
@@ -71,7 +85,7 @@
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
         const micButton = document.getElementById('mic-button');
-        const micWrapper = micButton.parentElement;
+        const micWrapper = document.getElementById('mic-wrapper');
 
         async function sendMessage(directMessage = null) {
             const message = directMessage || userInput.value.trim();
@@ -80,7 +94,6 @@
             appendMessage(message, 'user');
             if (!directMessage) userInput.value = '';
             
-            // Indicador de digitando
             const loadingDiv = document.createElement('div');
             loadingDiv.id = 'loading';
             loadingDiv.className = 'message-ai mb-4 flex';
@@ -89,7 +102,6 @@
             chatWindow.scrollTop = chatWindow.scrollHeight;
 
             try {
-                // CHAMA A API NA PASTA API/
                 const response = await fetch('/api/ask-christian-ai', { 
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json' }, 
@@ -97,31 +109,69 @@
                 });
                 
                 const data = await response.json();
-                document.getElementById('loading').remove();
+                if(document.getElementById('loading')) document.getElementById('loading').remove();
                 
                 if (data.answer) {
                     appendMessage(data.answer, 'ai');
                 } else {
-                    appendMessage("Desculpe, tive um momento de silêncio. Tente novamente.", 'ai');
+                    appendMessage("Desculpe, não compreendi.", 'ai');
                 }
             } catch (error) {
                 if(document.getElementById('loading')) document.getElementById('loading').remove();
-                appendMessage("Erro de conexão. Verifique sua internet.", 'ai');
+                appendMessage("Erro de conexão.", 'ai');
             }
         }
 
         function appendMessage(text, sender) {
             const div = document.createElement('div');
             div.className = sender === 'user' ? 'flex justify-end mb-4' : 'flex mb-4';
-            div.innerHTML = `<div class="${sender === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-800'} rounded-lg p-3 max-w-lg">${text}</div>`;
+            div.innerHTML = `<div class="${sender === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-800'} rounded-lg p-3 max-w-lg shadow-sm">${text}</div>`;
             chatWindow.appendChild(div);
             chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'pt-BR';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            const startRecording = (e) => {
+                e.preventDefault();
+                if (navigator.vibrate) navigator.vibrate(200); // VIBRAR 200ms
+                micButton.classList.add('mic-active'); // AUMENTAR 100%
+                try { recognition.start(); } catch(err) { }
+            };
+
+            const stopRecording = (e) => {
+                e.preventDefault();
+                micButton.classList.remove('mic-active');
+                recognition.stop();
+            };
+
+            micButton.addEventListener('touchstart', startRecording, { passive: false });
+            micButton.addEventListener('touchend', stopRecording);
+            micButton.addEventListener('mousedown', startRecording);
+            micButton.addEventListener('mouseup', stopRecording);
+            micButton.addEventListener('mouseleave', stopRecording);
+
+            recognition.onresult = (e) => {
+                const text = e.results[0][0].transcript;
+                if (text) sendMessage(text);
+            };
+            
+            recognition.onerror = (e) => {
+                micButton.classList.remove('mic-active');
+            };
+        } else {
+            micButton.style.display = 'none';
         }
 
         sendButton.addEventListener('click', () => sendMessage());
         userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
         
-        // Exibir botão de enviar ao digitar
         userInput.addEventListener('input', () => {
             if(userInput.value.trim()) {
                 sendButton.classList.remove('hidden');
@@ -132,20 +182,10 @@
             }
         });
 
-        // Lógica do Modal
         const modal = document.getElementById('image-modal');
         document.getElementById('profile-pic-header').onclick = () => { modal.style.display = "flex"; document.getElementById('modal-image-src').src = document.getElementById('profile-pic-header').src; };
         document.getElementById('close-modal-btn').onclick = () => { modal.style.display = "none"; };
         window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
-
-        // Reconhecimento de Voz Básico
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRecognition) {
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'pt-BR';
-            micButton.onclick = () => recognition.start();
-            recognition.onresult = (e) => sendMessage(e.results[0][0].transcript);
-        }
     </script>
 </body>
 </html>

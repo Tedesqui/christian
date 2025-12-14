@@ -10,11 +10,15 @@
         body { font-family: 'Inter', sans-serif; overflow: hidden; user-select: none; }
         #chat-window {
             background-color: #f0f9ff;
-            /* 👇 COLOQUE SEU LINK DO CÉU AQUI 👇 */
-            background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('https://raw.githubusercontent.com/Tedesqui/christian/refs/heads/main/heaven.jpeg');
+            /* 👇 CORREÇÃO AQUI: Mudamos de 0.9 para 0.2 (bem mais suave) 👇 */
+            background-image: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), url('COLOQUE_O_LINK_PUBLICO_DA_SUA_IMAGEM_HEAVEN_AQUI');
             background-size: cover; background-position: center; 
             position: relative; z-index: 40;
         }
+        /* Se quiser remover TOTALMENTE o branco, apague a linha acima e use esta:
+        background-image: url('https://raw.githubusercontent.com/Tedesqui/christian/refs/heads/main/heaven.jpeg');
+        */
+
         .hidden { display: none; }
         
         #mic-button {
@@ -22,11 +26,11 @@
             transform-origin: center;
         }
         
-        /* --- ESTILO QUANDO PRESSIONADO (CORRIGIDO) --- */
+        /* Estilo do botão azul quando pressionado (150% de tamanho) */
         .mic-active {
-            transform: scale(1.5) !important; /* Agora cresce apenas 50% */
-            background-color: #1d4ed8 !important; /* Azul mais escuro (não fica mais vermelho) */
-            box-shadow: 0 0 20px rgba(37, 99, 235, 0.6); /* Brilho azulado */
+            transform: scale(1.5) !important;
+            background-color: #1d4ed8 !important; 
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.6); 
         }
 
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); justify-content: center; align-items: center; }

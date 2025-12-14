@@ -8,16 +8,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
     <style>
         body { font-family: 'Inter', sans-serif; overflow: hidden; user-select: none; }
+        
         #chat-window {
             background-color: #f0f9ff;
-            /* 👇 CORREÇÃO AQUI: Mudamos de 0.9 para 0.2 (bem mais suave) 👇 */
-            background-image: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), url('COLOQUE_O_LINK_PUBLICO_DA_SUA_IMAGEM_HEAVEN_AQUI');
-            background-size: cover; background-position: center; 
-            position: relative; z-index: 40;
+            
+            /* 👇👇👇 COLE O LINK DA IMAGEM DO CÉU ABAIXO, DENTRO DAS ASPAS 👇👇👇 */
+            background-image: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), url('https://raw.githubusercontent.com/Tedesqui/christian/refs/heads/main/heaven.jpeg');
+            
+            background-size: cover; 
+            background-position: center; 
+            position: relative; 
+            z-index: 40;
         }
-        /* Se quiser remover TOTALMENTE o branco, apague a linha acima e use esta:
-        background-image: url('https://raw.githubusercontent.com/Tedesqui/christian/refs/heads/main/heaven.jpeg');
-        */
 
         .hidden { display: none; }
         
@@ -26,7 +28,7 @@
             transform-origin: center;
         }
         
-        /* Estilo do botão azul quando pressionado (150% de tamanho) */
+        /* Estilo do botão azul quando pressionado (150% de tamanho + Brilho) */
         .mic-active {
             transform: scale(1.5) !important;
             background-color: #1d4ed8 !important; 
@@ -43,7 +45,9 @@
 
     <div id="main-container" class="flex flex-col w-screen h-dvh bg-white md:w-full md:max-w-3xl md:h-[85vh] md:max-h-[900px] md:rounded-2xl md:shadow-2xl">
         <header class="bg-blue-600 text-white p-6 rounded-t-2xl shadow-md flex items-center space-x-4">
+            
             <img id="profile-pic-header" src="https://raw.githubusercontent.com/Tedesqui/christian/refs/heads/main/jesus.jpg" onerror="this.src='https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=200&q=80'" alt="Jesus Cristo" class="h-20 w-20 rounded-full object-cover border-2 border-white cursor-pointer hover:opacity-80 transition-opacity" />
+            
             <div>
                 <h1 class="text-2xl font-bold">IA Cristã</h1>
                 <p class="text-sm text-white">Segure o microfone para orar.</p>

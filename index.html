@@ -1,104 +1,35 @@
 <!DOCTYPE html>
 <html lang="pt">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title data-key="title">IA Cristã - Um Diálogo de Fé</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
-
     <style>
         body { font-family: 'Inter', sans-serif; overflow: hidden; }
         #chat-window {
             background-image: linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05)), url('images/heaven.jpeg');
             background-size: cover; background-position: center; position: relative; z-index: 40;
+            background-color: #f0f9ff; /* Cor de fundo caso a imagem falhe */
         }
         #user-input { caret-color: #2563eb; }
         .hidden { display: none; }
         .mic-wrapper { position: relative; display: inline-flex; align-items: center; justify-content: center; z-index: 50; }
         .recording button { transform: scale(1.5); background-color: #22c55e !important; transition: transform 0.2s ease, background-color 0.2s ease; }
         
-        /* --- NOVO: Estilos para o Modal (exatamente como no exemplo) --- */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            margin: auto;
-            display: block;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 8px;
-        }
-        .close-button {
-            position: absolute;
-            top: 15px;
-            right: 35px;
-            color: #f1f1f1;
-            font-size: 40px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .close-button:hover,
-        .close-button:focus {
-            color: #bbb;
-            text-decoration: none;
-            cursor: pointer;
-        }
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
+        .modal-content { margin: auto; display: block; width: 80%; max-width: 500px; border-radius: 8px; }
+        .close-button { position: absolute; top: 15px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; transition: 0.3s; cursor: pointer; }
     </style>
 </head>
 
 <body class="bg-slate-100 md:flex md:items-center md:justify-center">
-    
-    <script>
-        // Bloco de verificação de acesso e anti-fraude.
-        (() => {
-            const tokenString = localStorage.getItem('iaCristaAccessToken');
-            if (!tokenString) {
-                window.location.href = '/index.html'; // Se não há token, redireciona.
-                return;
-            }
-            try {
-                const token = JSON.parse(tokenString);
-                const now = Date.now();
-
-                if (!token.expiry || !token.lastCheck || now < token.lastCheck) {
-                    localStorage.removeItem('iaCristaAccessToken'); // Remove o token inválido.
-                    window.location.href = '/index.html';
-                    return;
-                }
-                
-                if (now >= token.expiry) {
-                    localStorage.removeItem('iaCristaAccessToken'); // Remove o token expirado.
-                    window.location.href = '/index.html';
-                    return;
-                }
-
-                token.lastCheck = now;
-                localStorage.setItem('iaCristaAccessToken', JSON.stringify(token));
-
-            } catch (e) {
-                localStorage.removeItem('iaCristaAccessToken');
-                window.location.href = '/index.html';
-            }
-        })();
-    </script>
 
     <div id="main-container" class="flex flex-col w-screen h-dvh bg-white md:w-full md:max-w-3xl md:h-[85vh] md:max-h-[900px] md:rounded-2xl md:shadow-2xl">
         <header class="bg-blue-600 text-white p-6 rounded-t-2xl shadow-md flex items-center space-x-4">
-            <img id="profile-pic-header" src="images/jesus.jpg" alt="Imagem de Jesus Cristo" data-key="header_alt" class="h-20 w-20 rounded-full object-cover border-2 border-white cursor-pointer hover:opacity-80 transition-opacity" />
+            <img id="profile-pic-header" src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=200&q=80" alt="Luz Divina" class="h-20 w-20 rounded-full object-cover border-2 border-white cursor-pointer hover:opacity-80 transition-opacity" />
             <div>
                 <h1 class="text-2xl font-bold" data-key="header_title">IA Cristã</h1>
                 <p class="text-sm text-white" data-key="header_subtitle">O seu companheiro para reflexão e estudo da Palavra.</p>
@@ -108,7 +39,7 @@
         <main id="chat-window" class="flex-1 p-6 overflow-y-auto">
             <div class="message-ai mb-4 flex">
                 <div class="bg-slate-200 text-slate-800 rounded-lg rounded-bl-none p-3 max-w-lg">
-                    <p class="text-sm" data-key="welcome_message">Paz do Senhor! Eu sou o seu assistente virtual cristão. Estou aqui para te ajudar a aprofundar-se na Palavra de Deus. Sinta-se à vontade para perguntar sobre versículos, personagens bíblicos, ou para conversarmos sobre os desafios da vida sob a ótica cristã.</p>
+                    <p class="text-sm" data-key="welcome_message">Paz do Senhor! Eu sou o seu assistente virtual cristão. Estou aqui para te ajudar a aprofundar-se na Palavra de Deus.</p>
                 </div>
             </div>
         </main>
@@ -116,13 +47,13 @@
         <footer class="p-2 bg-white rounded-b-2xl">
             <div class="w-full">
                 <div class="flex items-center bg-slate-100 rounded-full p-1.5">
-                    <input type="text" id="user-input" placeholder="Fale ou escreva..." data-key="input_placeholder" class="flex-1 bg-transparent border-none focus:ring-0 text-slate-800 placeholder-slate-400 px-4" />
+                    <input type="text" id="user-input" placeholder="Fale ou escreva..." class="flex-1 bg-transparent border-none focus:ring-0 text-slate-800 placeholder-slate-400 px-4" />
                     <button id="send-button" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2.5 transition-colors duration-300 ml-2.5 hidden">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>
                     </button>
                     <div class="mic-wrapper">
                         <button id="mic-button" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2.5 transition-colors duration-300 ml-2.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" id="mic-icon" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd" /></svg>
                         </button>
                     </div>
                 </div>
@@ -132,9 +63,9 @@
     
     <div id="image-modal" class="modal">
         <span id="close-modal-btn" class="close-button">&times;</span>
-        <img class="modal-content" id="modal-image-src" alt="Imagem da IA Cristã em tela cheia">
+        <img class="modal-content" id="modal-image-src" alt="Imagem ampliada">
     </div>
-    
+
     <script>
         const chatWindow = document.getElementById('chat-window');
         const userInput = document.getElementById('user-input');
@@ -142,176 +73,79 @@
         const micButton = document.getElementById('mic-button');
         const micWrapper = micButton.parentElement;
 
-        const translations = {
-            "pt": { "title": "IA Cristã - Um Diálogo de Fé", "header_alt": "Imagem de Jesus Cristo", "header_title": "IA Cristã", "header_subtitle": "O seu companheiro para reflexão e estudo da Palavra.", "welcome_message": "Paz do Senhor! Eu sou o seu assistente virtual cristão. Estou aqui para te ajudar a aprofundar-se na Palavra de Deus. Sinta-se à vontade para perguntar sobre versículos, personagens bíblicos, ou para conversarmos sobre os desafios da vida sob a ótica cristã.", "input_placeholder": "Fale ou escreva...", "input_placeholder_no_mic": "Escreva...", "listening": "🎙️ Ouvindo...", "typing_indicator": "A meditar na Palavra", "error_message": "Perdão, minha ovelha, ocorreu um erro. Por favor, tente novamente.", "mic_denied": "Permissão para o microfone negada. Ative nas definições do seu navegador.", "mic_error": "Ocorreu um erro no reconhecimento de voz." },
-            "en": { "title": "Christian AI - A Dialogue of Faith", "header_alt": "Image of Jesus Christ", "header_title": "Christian AI", "header_subtitle": "Your companion for reflection and study of the Word.", "welcome_message": "Peace of the Lord! I am your Christian virtual assistant. I am here to help you delve deeper into the Word of God. Feel free to ask about verses, biblical characters, or to talk about life's challenges from a Christian perspective.", "input_placeholder": "Speak or write...", "input_placeholder_no_mic": "Write...", "listening": "🎙️ Listening...", "typing_indicator": "Meditating on the Word", "error_message": "Pardon me, my sheep, an error occurred. Please try again.", "mic_denied": "Microphone permission denied. Please enable it in your browser settings.", "mic_error": "An error occurred with voice recognition." },
-            "es": { "title": "IA Cristiana - Un Diálogo de Fe", "header_alt": "Imagen de Jesucristo", "header_title": "IA Cristiana", "header_subtitle": "Tu compañero para la reflexión y el estudio de la Palabra.", "welcome_message": "¡Paz del Señor! Soy tu asistente virtual cristiano. Estoy aquí para ayudarte a profundizar en la Palabra de Dios. No dudes en preguntar sobre versículos, personajes bíblicos, o para conversar sobre los desafios de la vida desde la óptica cristiana.", "input_placeholder": "Habla o escribe...", "input_placeholder_no_mic": "Escribe...", "listening": "🎙️ Escuchando...", "typing_indicator": "Meditando en la Palabra", "error_message": "Perdón, mi oveja, ocurrió un error. Por favor, inténtalo de nuevo.", "mic_denied": "Se denegó el permiso para el micrófono. Por favor, actívalo en la configuración de tu navegador.", "mic_error": "Ocurrió un error con el reconocimiento de voz." },
-            "it": { "title": "IA Cristiana - Un Dialogo di Fede", "header_alt": "Immagine di Gesù Cristo", "header_title": "IA Cristiana", "header_subtitle": "Il tuo compagno per la riflessione e lo studio della Parola.", "welcome_message": "Pace del Signore! Sono il tuo assistente virtuale cristiano. Sono qui per aiutarti ad approfondire la Parola di Dio. Sentiti libero di chiedere versetti, personaggi biblici o di parlare delle sfide della vita da una prospettiva cristiana.", "input_placeholder": "Parla o scrivi...", "input_placeholder_no_mic": "Scrivi...", "listening": "🎙️ In ascolto...", "typing_indicator": "Meditando sulla Parola", "error_message": "Perdona, mia pecora, si è verificato un errore. Per favore, riprova.", "mic_denied": "Permesso per il microfono negato. Abilitalo nelle impostazioni del browser.", "mic_error": "Si è verificato un errore con il riconoscimento vocale." },
-            "fr": { "title": "IA Chrétienne - Un Dialogue de Foi", "header_alt": "Image de Jésus-Christ", "header_title": "IA Chrétienne", "header_subtitle": "Votre compagnon pour la réflexion et l'étude de la Parole.", "welcome_message": "Paix du Seigneur ! Je suis votre assistant virtuel chrétien. Je suis ici pour vous aider à approfondir la Parole de Dieu. N'hésitez pas à poser des questions sur des versets, des personnages bibliques, ou à parler des défis de la vie d'un point de vue chrétien.", "input_placeholder": "Parlez ou écrivez...", "input_placeholder_no_mic": "Écrivez...", "listening": "🎙️ Écoute...", "typing_indicator": "Méditation sur la Parole", "error_message": "Pardon, mon mouton, une erreur est survenue. Veuillez réessayer.", "mic_denied": "Permission du microphone refusée. Veuillez l'activer dans les paramètres de votre navigateur.", "mic_error": "Une erreur est survenue avec la reconnaissance vocale." },
-            "de": { "title": "Christliche KI - Ein Dialog des Glaubens", "header_alt": "Bild von Jesus Christus", "header_title": "Christliche KI", "header_subtitle": "Ihr Begleiter zur Besinnung und zum Studium des Wortes.", "welcome_message": "Friede des Herrn! Ich bin Ihr christlicher virtueller Assistent. Ich bin hier, um Ihnen zu helfen, tiefer in das Wort Gottes einzutauchen. Fragen Sie gerne nach Versen, biblischen Charakteren oder sprechen Sie über die Herausforderungen des Lebens aus christlicher Sicht.", "input_placeholder": "Sprechen oder schreiben Sie...", "input_placeholder_no_mic": "Schreiben Sie...", "listening": "🎙️ Höre zu...", "typing_indicator": "Meditiere über das Wort", "error_message": "Verzeihung, mein Schaf, ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.", "mic_denied": "Mikrofonberechtigung verweigert. Bitte aktivieren Sie sie in Ihren Browsereinstellungen.", "mic_error": "Ein Fehler bei der Spracherkennung ist aufgetreten." },
-            "ru": { "title": "Христианский ИИ - Диалог веры", "header_alt": "Изображение Иисуса Христа", "header_title": "Христианский ИИ", "header_subtitle": "Ваш спутник для размышлений и изучения Слова.", "welcome_message": "Мир Господень! Я ваш христианский виртуальный помощник. Я здесь, чтобы помочь вам глубже погрузиться в Слово Божье. Не стесняйтесь спрашивать о стихах, библейских персонажах или говорить о жизненных трудностях с христианской точки зрения.", "input_placeholder": "Говорите или пишите...", "input_placeholder_no_mic": "Пишите...", "listening": "🎙️ Слушаю...", "typing_indicator": "Размышляя над Словом", "error_message": "Прости, овца моя, произошла ошибка. Пожалуйста, попробуйте еще раз.", "mic_denied": "Доступ к микрофону запрещен. Пожалуйста, включите его в настройках вашего браузера.", "mic_error": "Произошла ошибка с распознаванием голоса." },
-            "ja": { "title": "キリスト教AI - 信仰の対話", "header_alt": "イエス・キリストの画像", "header_title": "キリスト教AI", "header_subtitle": "みことばの黙想と研究のためのあなたの伴侶。", "welcome_message": "主の平和！私はあなたのキリスト教バーチャルアシスタントです。神の言葉をより深く探求するお手伝いをします。聖句や聖書の登場人物について、またキリスト教の観点から人生の課題についてお気軽にお尋ねください。", "input_placeholder": "話すか書いてください...", "input_placeholder_no_mic": "書いてください...", "listening": "🎙️ 聞いています...", "typing_indicator": "みことばを黙想中", "error_message": "申し訳ありません、我が羊よ、エラーが発生しました。もう一度お試しください。", "mic_denied": "マイクの許可が拒否されました。ブラウザの設定で有効にしてください。", "mic_error": "音声認識でエラーが発生しました。" },
-            "ko": { "title": "기독교 AI - 신앙의 대화", "header_alt": "예수 그리스도 이미지", "header_title": "기독교 AI", "header_subtitle": "말씀 묵상과 연구를 위한 당신의 동반자.", "welcome_message": "주님의 평화! 저는 당신의 기독교 가상 비서입니다. 하나님의 말씀을 더 깊이 파고드는 데 도움을 드리기 위해 여기 있습니다. 구절, 성경 인물에 대해 자유롭게 질문하거나 기독교적 관점에서 삶의 도전에 대해 이야기하십시오.", "input_placeholder": "말하거나 쓰세요...", "input_placeholder_no_mic": "쓰세요...", "listening": "🎙️ 듣고 있습니다...", "typing_indicator": "말씀을 묵상 중", "error_message": "죄송합니다, 내 양이여, 오류가 발생했습니다. 다시 시도해 주세요.", "mic_denied": "마이크 권한이 거부되었습니다. 브라우저 설정에서 활성화해 주세요。", "mic_error": "음성 인식에 오류가 발생했습니다。" },
-            "zh": { "title": "基督教AI - 信仰的对话", "header_alt": "耶稣基督的形象", "header_title": "基督教AI", "header_subtitle": "您反思和学习圣言的伴侣。", "welcome_message": "主的平安！我是您的基督教虚拟助手。我在这里帮助您更深入地探究神的话语。欢迎随时询问经文、圣经人物，或从基督教的角度谈论生活中的挑战。", "input_placeholder": "说话或书写...", "input_placeholder_no_mic": "书写...", "listening": "🎙️ 正在聆听...", "typing_indicator": "默想圣言", "error_message": "对不起，我的羊，发生了错误。请再试一次。", "mic_denied": "麦克风权限被拒绝。请在您的浏览器设置中启用它。", "mic_error": "语音识别发生错误。" },
-            "hi": { "title": "ईसाई एआई - विश्वास का एक संवाद", "header_alt": "ईसा मसीह की छवि", "header_title": "ईसाई एआई", "header_subtitle": "वचन के चिंतन और अध्ययन के लिए आपका साथी।", "welcome_message": "प्रभु की शांति! मैं आपका ईसाई आभासी सहायक हूँ। मैं यहाँ परमेश्वर के वचन में गहराई से उतरने में आपकी मदद करने के लिए हूँ। छंदों, बाइबिल के पात्रों के बारे में पूछने के लिए स्वतंत्र महसूस करें, या ईसाई दृष्टिकोण से जीवन की चुनौतियों के बारे में बात करें।", "input_placeholder": "बोलें या लिखें...", "input_placeholder_no_mic": "लिखें...", "listening": "🎙️ सुन रहा हूँ...", "typing_indicator": "वचन पर मनन कर रहा है", "error_message": "मुझे क्षमा करें, मेरी भेड़, एक त्रुटि हुई। कृपया पुन: प्रयास करें।", "mic_denied": "माइक्रोफोन की अनुमति अस्वीकृत। कृपया इसे अपने ब्राउज़र सेटिंग्स में सक्षम करें।", "mic_error": "आवाज पहचान के साथ एक त्रुटि हुई।" },
-            "fil": { "title": "Christian AI - Isang Diyalogo ng Pananampalataya", "header_alt": "Imahe ni Hesukristo", "header_title": "Christian AI", "header_subtitle": "Ang iyong kasama para sa pagninilay at pag-aaral ng Salita.", "welcome_message": "Kapayapaan ng Panginoon! Ako ang iyong Christian virtual assistant. Narito ako upang tulungan kang mas malalim na pag-aralan ang Salita ng Diyos. Huwag mag-atubiling magtanong tungkol sa mga talata, mga tauhan sa bibliya, o pag-usapan ang mga hamon sa buhay mula sa isang Kristiyanong pananaw.", "input_placeholder": "Magsalita o magsulat...", "input_placeholder_no_mic": "Magsulat...", "listening": "🎙️ Nakikinig...", "typing_indicator": "Nagninilay sa Salita", "error_message": "Patawarin mo ako, aking tupa, nagkaroon ng error. Pakisubukang muli.", "mic_denied": "Tinanggihan ang pahintulot sa mikropono. Paki-enable ito sa mga setting ng iyong browser.", "mic_error": "Nagkaroon ng error sa voice recognition." },
-            "sv": { "title": "Kristen AI - En dialog om tro", "header_alt": "Bild av Jesus Kristus", "header_title": "Kristen AI", "header_subtitle": "Din följeslagare för reflektion och studier av Ordet.", "welcome_message": "Herrens frid! Jag är din kristna virtuella assistent. Jag är här för att hjälpa dig att fördjupa dig i Guds Ord. Fråga gärna om verser, bibliska karaktärer eller prata om livets utmaningar ur ett kristet perspektiv.", "input_placeholder": "Tala eller skriv...", "input_placeholder_no_mic": "Skriv...", "listening": "🎙️ Lyssnar...", "typing_indicator": "Mediterar över Ordet", "error_message": "Förlåt mig, mitt får, ett fel inträffade. Försök igen.", "mic_denied": "Mikrofontillstånd nekat. Aktivera det i din webbläsares inställningar.", "mic_error": "Ett fel inträffade med röstigenkänning." },
-            "pl": { "title": "Chrześcijańska SI - Dialog wiary", "header_alt": "Obraz Jezusa Chrystusa", "header_title": "Chrześcijańska SI", "header_subtitle": "Twój towarzysz do refleksji i studiowania Słowa.", "welcome_message": "Pokój Pański! Jestem twoim chrześcijańskim wirtualnym asystentem. Jestem tutaj, aby pomóc ci zagłębić się w Słowo Boże. Zapraszam do zadawania pytań o wersety, postacie biblijne lub do rozmowy o wyzwaniach życiowych z chrześcijańskiej perspektywy.", "input_placeholder": "Mów lub pisz...", "input_placeholder_no_mic": "Pisz...", "listening": "🎙️ Słucham...", "typing_indicator": "Rozmyślanie nad Słowem", "error_message": "Wybacz mi, moja owco, wystąpił błąd. Spróbuj ponownie.", "mic_denied": "Odmowa dostępu do mikrofonu. Włącz go w ustawieniach przeglądarki.", "mic_error": "Wystąpił błąd rozpoznawania mowy." },
-            "bn": { "title": "খ্রিস্টান এআই - বিশ্বাসের একটি সংলাপ", "header_alt": "যীশু খ্রিস্টের ছবি", "header_title": "খ্রিস্টান এআই", "header_subtitle": "শব্দের প্রতিফলন এবং অধ্যয়নের জন্য আপনার সঙ্গী।", "welcome_message": "প্রভুর শান্তি! আমি আপনার খ্রিস্টান ভার্চয়াল সহকারী। আমি এখানে ঈশ্বরের বাক্যে আরও গভীরে যেতে আপনাকে সাহায্য করার জন্য আছি। আয়াত, বাইবেলের চরিত্র সম্পর্কে জিজ্ঞাসা করতে বা খ্রিস্টান দৃষ্টিকোণ থেকে জীবনের চ্যালেঞ্জ সম্পর্কে কথা বলতে দ্বিধা বোধ করুন।", "input_placeholder": "বলুন বা লিখুন...", "input_placeholder_no_mic": "লিখুন...", "listening": "🎙️ শুনছি...", "typing_indicator": "শব্দ নিয়ে ধ্যান করা", "error_message": "আমাকে ক্ষমা করুন, আমার মেষ, একটি ত্রুটি ঘটেছে। আবার চেষ্টা করুন.", "mic_denied": "মাইক্রোফোনের অনুমতি अस्वीकार করা হয়েছে। আপনার ব্রাউজার সেটিংসে এটি সক্ষম করুন।", "mic_error": "ভয়েস রিকগনিশনে একটি ত্রুটি ঘটেছে।" },
-            "ar": { "title": "الذكاء الاصطناعي المسيحي - حوار الإيمان", "header_alt": "صورة يسوع المسيح", "header_title": "الذكاء الاصطناعي المسيحي", "header_subtitle": "رفيقك للتأمل ودراسة الكلمة.", "welcome_message": "سلام الرب! أنا مساعدك الاftراضي المسيحي. أنا هنا لمساعدتك على التعمق في كلمة الله. لا تتردد في السؤال عن الآيات والشخصيات الكتابية أو التحدث عن تحديات الحياة من منظور مسيحي.", "input_placeholder": "تحدث أو اكتب...", "input_placeholder_no_mic": "اكتب...", "listening": "🎙️ أستمع...", "typing_indicator": "أتأمل في الكلمة", "error_message": "سامحني يا خرافي, حدث خطأ. يرجى المحاولة مرة أخرى.", "mic_denied": "تم رفض إذن الميكروفون. يرجى تمكينه في إعدادات المتصفح.", "mic_error": "حدث خطأ في التعرف على الصوت。" }
-        };
-
-        let currentLang = 'pt';
-
-        function setLanguage(lang) {
-            const langCode = (lang || 'pt').split('-')[0];
-            currentLang = translations[langCode] ? langCode : 'en';
-            document.documentElement.lang = currentLang;
-            document.querySelectorAll('[data-key]').forEach(element => {
-                const key = element.getAttribute('data-key');
-                const dict = translations[currentLang] || translations['en'];
-                if (dict[key]) {
-                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                        element.placeholder = dict[key];
-                    } else if (element.tagName === 'IMG') {
-                        element.alt = dict[key];
-                    } else {
-                        element.textContent = dict[key];
-                    }
-                }
-            });
-        }
-        
         async function sendMessage(directMessage = null) {
             const message = directMessage || userInput.value.trim();
             if (!message) return;
 
             appendMessage(message, 'user');
-            if (directMessage === null) { userInput.value = ''; userInput.dispatchEvent(new Event('input')); }
-            showTypingIndicator();
+            if (!directMessage) userInput.value = '';
+            
+            // Indicador de digitando
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loading';
+            loadingDiv.className = 'message-ai mb-4 flex';
+            loadingDiv.innerHTML = '<div class="bg-slate-200 text-slate-800 rounded-lg p-3">Meditando na palavra...</div>';
+            chatWindow.appendChild(loadingDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
             try {
-                const response = await fetch('/api/ask-christian-ai', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question: message, language: currentLang }), });
-                if (!response.ok) { const errorData = await response.json(); throw new Error(`Erro no servidor: ${response.status} - ${errorData.error}`); }
+                // CHAMA A API NA PASTA API/
+                const response = await fetch('/api/ask-christian-ai', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ question: message }) 
+                });
+                
                 const data = await response.json();
-                removeTypingIndicator();
-                appendMessage(data.answer, 'ai');
+                document.getElementById('loading').remove();
+                
+                if (data.answer) {
+                    appendMessage(data.answer, 'ai');
+                } else {
+                    appendMessage("Desculpe, tive um momento de silêncio. Tente novamente.", 'ai');
+                }
             } catch (error) {
-                console.error('Erro ao comunicar com o backend:', error);
-                removeTypingIndicator();
-                appendMessage((translations[currentLang] || translations['en']).error_message, 'ai');
+                if(document.getElementById('loading')) document.getElementById('loading').remove();
+                appendMessage("Erro de conexão. Verifique sua internet.", 'ai');
             }
+        }
+
+        function appendMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = sender === 'user' ? 'flex justify-end mb-4' : 'flex mb-4';
+            div.innerHTML = `<div class="${sender === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-800'} rounded-lg p-3 max-w-lg">${text}</div>`;
+            chatWindow.appendChild(div);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
         }
 
         sendButton.addEventListener('click', () => sendMessage());
-        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); sendMessage(); } });
+        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+        
+        // Exibir botão de enviar ao digitar
+        userInput.addEventListener('input', () => {
+            if(userInput.value.trim()) {
+                sendButton.classList.remove('hidden');
+                micWrapper.classList.add('hidden');
+            } else {
+                sendButton.classList.add('hidden');
+                micWrapper.classList.remove('hidden');
+            }
+        });
 
+        // Lógica do Modal
+        const modal = document.getElementById('image-modal');
+        document.getElementById('profile-pic-header').onclick = () => { modal.style.display = "flex"; document.getElementById('modal-image-src').src = document.getElementById('profile-pic-header').src; };
+        document.getElementById('close-modal-btn').onclick = () => { modal.style.display = "none"; };
+        window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
+
+        // Reconhecimento de Voz Básico
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
             const recognition = new SpeechRecognition();
-            recognition.interimResults = false;
-            recognition.continuous = false;
-            let isRecognizing = false;
-
-            recognition.onstart = () => {
-                isRecognizing = true;
-                micWrapper.classList.add('recording');
-                appendMessage((translations[currentLang] || translations['en']).listening, 'system');
-            };
-            recognition.onend = () => {
-                isRecognizing = false;
-                micWrapper.classList.remove('recording');
-                removeSystemMessage();
-            };
-            recognition.onresult = (event) => {
-                const transcript = event.results[event.results.length - 1][0].transcript.trim();
-                if (transcript) { sendMessage(transcript); }
-            };
-            recognition.onerror = (event) => {
-                let msg = (translations[currentLang] || translations['en']).mic_error;
-                if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-                    msg = (translations[currentLang] || translations['en']).mic_denied;
-                }
-                console.error('Erro no reconhecimento de voz:', event.error);
-                removeSystemMessage();
-                appendMessage(msg, 'system-error');
-            };
-
-            micButton.addEventListener('click', () => {
-                if (isRecognizing) {
-                    recognition.stop();
-                } else {
-                    recognition.lang = currentLang === 'en' ? 'en-US' : `${currentLang}-${currentLang.toUpperCase()}`;
-                    try { recognition.start(); } catch (error) {
-                        console.error("Erro ao iniciar reconhecimento:", error);
-                        appendMessage((translations[currentLang] || translations['en']).mic_error, 'system-error');
-                    }
-                }
-            });
+            recognition.lang = 'pt-BR';
+            micButton.onclick = () => recognition.start();
+            recognition.onresult = (e) => sendMessage(e.results[0][0].transcript);
         }
-
-        function appendMessage(message, sender) { const messageWrapper = document.createElement('div'); const messageBubble = document.createElement('div'); if (sender === 'user') { messageWrapper.className = 'message-user mb-4 flex justify-end'; messageBubble.className = 'bg-blue-600 text-white rounded-lg rounded-br-none p-3 max-w-lg'; } else if (sender === 'ai') { messageWrapper.className = 'message-ai mb-4 flex'; messageBubble.className = 'bg-slate-200 text-slate-800 rounded-lg rounded-bl-none p-3 max-w-lg'; } else { const existing = document.getElementById('system-message'); if (existing) existing.remove(); messageWrapper.id = 'system-message'; messageWrapper.className = 'message-system mb-4 flex justify-center'; messageBubble.className = sender === 'system-error' ? 'bg-red-100 text-red-700 rounded-lg p-2 text-xs' : 'bg-yellow-100 text-yellow-700 rounded-lg p-2 text-xs'; } messageBubble.innerHTML = `<p class="text-sm">${message.replace(/\n/g, '<br>')}</p>`; messageWrapper.appendChild(messageBubble); chatWindow.appendChild(messageWrapper); chatWindow.scrollTop = chatWindow.scrollHeight; }
-        function removeSystemMessage() { const el = document.getElementById('system-message'); if (el) el.remove(); }
-        function showTypingIndicator() { const ind = `<div id="typing-indicator" class="message-ai mb-4 flex"><div class="bg-slate-200 text-slate-800 rounded-lg rounded-bl-none p-3 max-w-lg"><div class="flex items-center space-x-1"><span class="text-sm">${(translations[currentLang] || translations['en']).typing_indicator}</span><div class="h-2 w-2 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div><div class="h-2 w-2 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div><div class="h-2 w-2 bg-slate-400 rounded-full animate-bounce"></div></div></div></div>`; chatWindow.insertAdjacentHTML('beforeend', ind); chatWindow.scrollTop = chatWindow.scrollHeight; }
-        function removeTypingIndicator() { const el = document.getElementById('typing-indicator'); if (el) el.remove(); }
-        
-        window.addEventListener('load', () => {
-            const userLang = navigator.language || navigator.userLanguage;
-            setLanguage(userLang.startsWith('pt') ? 'pt' : 'en');
-            
-            const isIPhone = /iPhone/i.test(navigator.userAgent);
-
-            if (isIPhone) {
-                if (micWrapper) micWrapper.style.display = 'none';
-                if (sendButton) sendButton.classList.remove('hidden');
-                
-                const dict = translations[currentLang] || translations['en'];
-                userInput.placeholder = dict.input_placeholder_no_mic;
-            } else {
-                if (micWrapper) {
-                    userInput.addEventListener('input', () => {
-                        if (userInput.value.trim() !== '') {
-                            sendButton.classList.remove('hidden');
-                            micWrapper.classList.add('hidden');
-                        } else {
-                            sendButton.classList.add('hidden');
-                            micWrapper.classList.remove('hidden');
-                        }
-                    });
-                }
-            }
-            userInput.focus();
-
-            // --- NOVO: LÓGICA DO MODAL (exatamente como no exemplo) ---
-            const imageModal = document.getElementById('image-modal');
-            const profilePic = document.getElementById('profile-pic-header');
-            const modalImageSrc = document.getElementById('modal-image-src');
-            const closeModalBtn = document.getElementById('close-modal-btn');
-
-            // Função para abrir o modal
-            profilePic.onclick = function() {
-                imageModal.style.display = "flex";
-                modalImageSrc.src = this.src; // Pega o 'src' da imagem clicada
-            }
-
-            // Função para fechar clicando no 'X'
-            closeModalBtn.onclick = function() {
-                imageModal.style.display = "none";
-            }
-
-            // Função para fechar clicando fora da imagem
-            window.onclick = function(event) {
-                if (event.target == imageModal) {
-                    imageModal.style.display = "none";
-                }
-            }
-            
-            // Opcional: Fechar com a tecla "Escape"
-            document.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape' && imageModal.style.display === "flex") {
-                    imageModal.style.display = "none";
-                }
-            });
-        });
     </script>
 </body>
 </html>

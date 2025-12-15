@@ -34,7 +34,9 @@ export default async function handler(req, res) {
         const apiKey = process.env.OPENAI_API_KEY;
         const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
-        const systemPrompt = systemPrompts[language] || systemPrompts['en'];
+        // CORREÇÃO AQUI: Se não encontrar o idioma, usa o 'pt' como padrão para garantir
+        // que a instrução de falar português seja sempre carregada.
+        const systemPrompt = systemPrompts[language] || systemPrompts['pt'];
 
         const payload = {
             model: "gpt-4o",

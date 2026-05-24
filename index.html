@@ -44,14 +44,20 @@
 <body class="bg-slate-100 md:flex md:items-center md:justify-center">
 
     <div id="main-container" class="flex flex-col w-screen h-dvh bg-white md:w-full md:max-w-3xl md:h-[85vh] md:max-h-[900px] md:rounded-2xl md:shadow-2xl">
-        <header class="bg-blue-600 text-white p-6 rounded-t-2xl shadow-md flex items-center space-x-4">
-            
-            <img id="profile-pic-header" src="https://raw.githubusercontent.com/Tedesqui/christian/refs/heads/main/jesus.jpg" onerror="this.src='https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=200&q=80'" alt="Jesus Cristo" class="h-20 w-20 rounded-full object-cover border-2 border-white cursor-pointer hover:opacity-80 transition-opacity" />
-            
-            <div>
-                <h1 class="text-2xl font-bold">O Conselheiro</h1>
-                <p class="text-sm text-white">O seu assistente cristão.</p>
+        <header class="bg-blue-600 text-white p-6 rounded-t-2xl shadow-md flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <img id="profile-pic-header" src="https://raw.githubusercontent.com/Tedesqui/christian/refs/heads/main/jesus.jpg" onerror="this.src='https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=200&q=80'" alt="Jesus Cristo" class="h-20 w-20 rounded-full object-cover border-2 border-white cursor-pointer hover:opacity-80 transition-opacity" />
+                
+                <div>
+                    <h1 class="text-2xl font-bold">O Conselheiro</h1>
+                    <p class="text-sm text-white">O seu assistente cristão.</p>
+                </div>
             </div>
+
+            <!-- Botão que aciona a assinatura no Android Studio -->
+            <a href="iacrista://assinar" id="btn-premium" class="bg-yellow-500 hover:bg-yellow-400 text-yellow-900 text-xs font-bold px-4 py-2 rounded-full shadow transition-colors duration-300">
+                Assinar Premium
+            </a>
         </header>
 
         <main id="chat-window" class="flex-1 p-6 overflow-y-auto">
@@ -65,7 +71,7 @@
         <footer class="p-2 bg-white rounded-b-2xl">
             <div class="w-full">
                 <div class="flex items-center bg-slate-100 rounded-full p-1.5">
-                    <input type="text" id="user-input" placeholder="Digite aqui..." class="flex-1 bg-transparent border-none focus:ring-0 text-slate-800 placeholder-slate-400 px-4" />
+                    <input type="text" id="user-input" placeholder="Digite aqui..." class="flex-1 bg-transparent border-none focus:ring-0 text-slate-800 placeholder-slate-400 px-4 outline-none" />
                     
                     <button id="send-button" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2.5 transition-colors duration-300 ml-2.5 hidden">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>
@@ -92,6 +98,18 @@
         const sendButton = document.getElementById('send-button');
         const micButton = document.getElementById('mic-button');
         const micWrapper = document.getElementById('mic-wrapper');
+        const btnPremium = document.getElementById('btn-premium');
+
+        // --- INTEGRAÇÃO COM O APLICATIVO ANDROID ---
+        // Esta função é chamada pelo MainActivity.java quando o pagamento é aprovado ou verificado
+        window.setPremiumStatus = function(isPremium) {
+            if (isPremium) {
+                // Esconde o botão de assinar
+                if (btnPremium) btnPremium.style.display = 'none';
+                // Opcional: Enviar mensagem de boas-vindas ao Premium
+                appendMessage("Sua assinatura Premium foi confirmada! Deus abençoe grandemente.", 'ai');
+            }
+        };
 
         async function sendMessage(directMessage = null) {
             const message = directMessage || userInput.value.trim();
@@ -187,7 +205,10 @@
         });
 
         const modal = document.getElementById('image-modal');
-        document.getElementById('profile-pic-header').onclick = () => { modal.style.display = "flex"; document.getElementById('modal-image-src').src = document.getElementById('profile-pic-header').src; };
+        document.getElementById('profile-pic-header').onclick = () => { 
+            modal.style.display = "flex"; 
+            document.getElementById('modal-image-src').src = document.getElementById('profile-pic-header').src; 
+        };
         document.getElementById('close-modal-btn').onclick = () => { modal.style.display = "none"; };
         window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
     </script>

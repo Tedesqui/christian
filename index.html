@@ -11,10 +11,7 @@
         
         #chat-window {
             background-color: #f0f9ff;
-            
-            /* 👇👇👇 COLE O LINK DA IMAGEM DO CÉU ABAIXO, DENTRO DAS ASPAS 👇👇👇 */
             background-image: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), url('https://raw.githubusercontent.com/Tedesqui/christian/refs/heads/main/heaven.jpeg');
-            
             background-size: cover; 
             background-position: center; 
             position: relative; 
@@ -28,7 +25,6 @@
             transform-origin: center;
         }
         
-        /* Estilo do botão azul quando pressionado (150% de tamanho + Brilho) */
         .mic-active {
             transform: scale(1.5) !important;
             background-color: #1d4ed8 !important; 
@@ -46,15 +42,14 @@
     <div id="main-container" class="flex flex-col w-screen h-dvh bg-white md:w-full md:max-w-3xl md:h-[85vh] md:max-h-[900px] md:rounded-2xl md:shadow-2xl">
         <header class="bg-blue-600 text-white p-6 rounded-t-2xl shadow-md flex items-center justify-between">
             <div class="flex items-center space-x-4">
-                <img id="profile-pic-header" src="https://raw.githubusercontent.com/Tedesqui/christian/refs/heads/main/jesus.jpg" onerror="this.src='https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=200&q=80'" alt="Jesus Cristo" class="h-20 w-20 rounded-full object-cover border-2 border-white cursor-pointer hover:opacity-80 transition-opacity" />
+                <img id="profile-pic-header" src="https://raw.githubusercontent.com/Tedesqui/christian/refs/heads/main/jesus.jpg" onerror="this.src='https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=200&q=80'" alt="Jesus" class="h-20 w-20 rounded-full object-cover border-2 border-white cursor-pointer hover:opacity-80 transition-opacity" />
                 
                 <div>
-                    <h1 class="text-2xl font-bold">O Conselheiro</h1>
-                    <p class="text-sm text-white">O seu assistente cristão.</p>
+                    <h1 id="app-title" class="text-2xl font-bold">O Conselheiro</h1>
+                    <p id="app-subtitle" class="text-sm text-white">O seu assistente cristão.</p>
                 </div>
             </div>
 
-            <!-- Botão que aciona a assinatura no Android Studio -->
             <a href="iacrista://assinar" id="btn-premium" class="bg-yellow-500 hover:bg-yellow-400 text-yellow-900 text-xs font-bold px-4 py-2 rounded-full shadow transition-colors duration-300">
                 Assinar Premium
             </a>
@@ -63,7 +58,7 @@
         <main id="chat-window" class="flex-1 p-6 overflow-y-auto">
             <div class="message-ai mb-4 flex">
                 <div class="bg-slate-200 text-slate-800 rounded-lg rounded-bl-none p-3 max-w-lg">
-                    <p class="text-sm">Paz do Senhor, querida ovelha! No que posso te ajudar hoje? Minhas respostas são com base nas Sagradas Escrituras.</p>
+                    <p id="welcome-msg" class="text-sm">Paz do Senhor, querida ovelha! No que posso te ajudar hoje? Minhas respostas são com base nas Sagradas Escrituras.</p>
                 </div>
             </div>
         </main>
@@ -89,10 +84,89 @@
     
     <div id="image-modal" class="modal">
         <span id="close-modal-btn" class="close-button">&times;</span>
-        <img class="modal-content" id="modal-image-src" alt="Imagem ampliada">
+        <img class="modal-content" id="modal-image-src" alt="Imagem">
     </div>
 
     <script>
+        // --- DICIONÁRIO DE IDIOMAS ---
+        const i18n = {
+            "pt": {
+                title: "O Conselheiro",
+                subtitle: "O seu assistente cristão.",
+                welcome: "Paz do Senhor, querida ovelha! No que posso te ajudar hoje? Minhas respostas são com base nas Sagradas Escrituras.",
+                placeholder: "Digite aqui...",
+                btnPremiumBase: "Assinar Premium",
+                loading: "Meditando na palavra...",
+                error: "Erro de conexão.",
+                speechLang: "pt-BR",
+                premiumSuccess: "Sua assinatura Premium foi confirmada! Deus abençoe grandemente."
+            },
+            "en": {
+                title: "The Counselor",
+                subtitle: "Your Christian assistant.",
+                welcome: "Peace of the Lord, dear sheep! How can I help you today? My answers are based on the Holy Scriptures.",
+                placeholder: "Type here...",
+                btnPremiumBase: "Subscribe Premium",
+                loading: "Meditating on the word...",
+                error: "Connection error.",
+                speechLang: "en-US",
+                premiumSuccess: "Your Premium subscription is confirmed! God bless you greatly."
+            },
+            "es": {
+                title: "El Consejero",
+                subtitle: "Tu asistente cristiano.",
+                welcome: "¡La Paz del Señor, querida oveja! ¿En qué puedo ayudarte hoy? Mis respuestas se basan en las Sagradas Escrituras.",
+                placeholder: "Escribe aquí...",
+                btnPremiumBase: "Suscribirse Premium",
+                loading: "Meditando en la palabra...",
+                error: "Error de conexión.",
+                speechLang: "es-ES",
+                premiumSuccess: "¡Tu suscripción Premium ha sido confirmada! Dios te bendiga grandemente."
+            },
+            "it": {
+                title: "Il Consigliere",
+                subtitle: "Il tuo assistente cristiano.",
+                welcome: "Pace del Signore, cara pecora! Come posso aiutarti oggi? Le mie risposte si basano sulle Sacre Scritture.",
+                placeholder: "Scrivi qui...",
+                btnPremiumBase: "Abbonamento Premium",
+                loading: "Meditando sulla parola...",
+                error: "Errore di connessione.",
+                speechLang: "it-IT",
+                premiumSuccess: "Il tuo abbonamento Premium è confermato! Dio ti benedica grandemente."
+            },
+            "de": {
+                title: "Der Ratgeber",
+                subtitle: "Dein christlicher Assistent.",
+                welcome: "Friede des Herrn, liebes Schaf! Wie kann ich dir heute helfen? Meine Antworten basieren auf der Heiligen Schrift.",
+                placeholder: "Hier tippen...",
+                btnPremiumBase: "Premium Abonnieren",
+                loading: "Über das Wort nachdenken...",
+                error: "Verbindungsfehler.",
+                speechLang: "de-DE",
+                premiumSuccess: "Dein Premium-Abo ist bestätigt! Gott segne dich reichlich."
+            }
+        };
+
+        // Pega o idioma da URL enviada pelo Android ou o do navegador do usuário
+        const urlParams = new URLSearchParams(window.location.search);
+        let userLang = urlParams.get('lang') || navigator.language.slice(0, 2);
+        
+        // Se o idioma não for nenhum dos suportados, o padrão (fallback) será inglês
+        if (!i18n[userLang]) {
+            userLang = 'en'; 
+        }
+
+        const t = i18n[userLang]; // Carrega os textos do idioma correto
+
+        // --- TRADUZIR A TELA AO ABRIR ---
+        document.getElementById('app-title').innerText = t.title;
+        document.getElementById('app-subtitle').innerText = t.subtitle;
+        document.getElementById('welcome-msg').innerText = t.welcome;
+        document.getElementById('user-input').placeholder = t.placeholder;
+        document.getElementById('btn-premium').innerText = t.btnPremiumBase;
+        document.documentElement.lang = userLang; // Atualiza a tag <html>
+
+        // --- LÓGICA DO APP ---
         const chatWindow = document.getElementById('chat-window');
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
@@ -100,14 +174,17 @@
         const micWrapper = document.getElementById('mic-wrapper');
         const btnPremium = document.getElementById('btn-premium');
 
-        // --- INTEGRAÇÃO COM O APLICATIVO ANDROID ---
-        // Esta função é chamada pelo MainActivity.java quando o pagamento é aprovado ou verificado
+        // Recebe o PREÇO do Android e atualiza o botão
+        window.updatePremiumPrice = function(priceString) {
+            if (btnPremium) {
+                btnPremium.innerText = t.btnPremiumBase + " " + priceString;
+            }
+        };
+
         window.setPremiumStatus = function(isPremium) {
             if (isPremium) {
-                // Esconde o botão de assinar
                 if (btnPremium) btnPremium.style.display = 'none';
-                // Opcional: Enviar mensagem de boas-vindas ao Premium
-                appendMessage("Sua assinatura Premium foi confirmada! Deus abençoe grandemente.", 'ai');
+                appendMessage(t.premiumSuccess, 'ai');
             }
         };
 
@@ -121,7 +198,7 @@
             const loadingDiv = document.createElement('div');
             loadingDiv.id = 'loading';
             loadingDiv.className = 'message-ai mb-4 flex';
-            loadingDiv.innerHTML = '<div class="bg-slate-200 text-slate-800 rounded-lg p-3">Meditando na palavra...</div>';
+            loadingDiv.innerHTML = `<div class="bg-slate-200 text-slate-800 rounded-lg p-3">${t.loading}</div>`;
             chatWindow.appendChild(loadingDiv);
             chatWindow.scrollTop = chatWindow.scrollHeight;
 
@@ -129,7 +206,8 @@
                 const response = await fetch('/api/ask-christian-ai', { 
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ question: message }) 
+                    // ENVIA O IDIOMA PARA SUA API VERCEL SABER COMO RESPONDER
+                    body: JSON.stringify({ question: message, language: userLang }) 
                 });
                 
                 const data = await response.json();
@@ -138,11 +216,11 @@
                 if (data.answer) {
                     appendMessage(data.answer, 'ai');
                 } else {
-                    appendMessage("Desculpe, não compreendi.", 'ai');
+                    appendMessage(t.error, 'ai');
                 }
             } catch (error) {
                 if(document.getElementById('loading')) document.getElementById('loading').remove();
-                appendMessage("Erro de conexão.", 'ai');
+                appendMessage(t.error, 'ai');
             }
         }
 
@@ -157,7 +235,8 @@
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
             const recognition = new SpeechRecognition();
-            recognition.lang = 'pt-BR';
+            // MICROFONE AGORA ESCUTA NO IDIOMA DO USUÁRIO
+            recognition.lang = t.speechLang;
             recognition.continuous = false;
             recognition.interimResults = false;
 
